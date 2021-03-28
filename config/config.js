@@ -1,6 +1,7 @@
-import * as path from "path";
+import * as path from 'path';
 
 export default {
+  hash: true,
   base: '/wine/',
   publicPath: '/wine/',
   outputPath: 'docs',
@@ -16,4 +17,4 @@ export default {
   },
   dynamicImport: {},
   exportStatic: {},
-}
+};
