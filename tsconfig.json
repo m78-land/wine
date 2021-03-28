@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@m78/wine": ["src/index.ts"],
+//      "MyLab": [
+//        "src/index.ts"
+//      ]
+    },
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "strictPropertyInitialization": false,
+    "importHelpers": true,
+  },
+  "include": [
+    "node_modules/@docusaurus/module-type-aliases/src/index.d.ts",
+    "src/**/*",
+    "src/docs/**/*",
+    "./app.d.ts",
+    "test",
+    /* 以下配置配合eslint解析 */
+    "./config",
+    ".eslintrc.js",
+    ".prettierrc.js",
+    "rollup.config.js",
+    "babel.config.js"
+  ],
+  "exclude": [
+    "dist",
+  ]
+}
