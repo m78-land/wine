@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
+    "types": ["vite/client"],
     "paths": {
       "@m78/wine": ["src/index.ts"],
+      "@m78/wine/*": ["src/*"],
 //      "MyLab": [
 //        "src/index.ts"
 //      ]
@@ -28,7 +30,7 @@
   "include": [
     "node_modules/@docusaurus/module-type-aliases/src/index.d.ts",
     "src/**/*",
-    "src/docs/**/*",
+    "src/demo/**/*",
     "./app.d.ts",
     "test",
     /* 以下配置配合eslint解析 */

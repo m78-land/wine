@@ -71,11 +71,11 @@ var TIP_NODE_KEY = 'J__M78__TIP__NODE';
 var NAME_SPACE = 'M78__WINE';
 
 /** 根据alignment值获取x, y值 */
-function calcAlignment(alignment, availableSize) {
+function calcAlignment(alignment, availableSize, limit) {
     var sW = availableSize[0], sH = availableSize[1];
     var aX = alignment[0], aY = alignment[1];
-    var x = sW * aX;
-    var y = sH * aY;
+    var x = (sW + limit.left) * aX;
+    var y = (sH + limit.top) * aY;
     return [x, y];
 }
 /** 根据[number, height]格式的元组取{ w, h }格式的对象 */
@@ -300,7 +300,7 @@ function useMethods(context) {
         var y = self.memoY;
         var _a = self.memoWrapSize || [], width = _a[0], height = _a[1];
         if (!isNumber(x) || !isNumber(y)) {
-            var size = calcAlignment(state.alignment, self.availableSize);
+            var size = calcAlignment(state.alignment, self.availableSize, __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), state.limitBound));
             x = size[0];
             y = size[1];
         }
@@ -618,9 +618,10 @@ var renderBuiltInHeader = function (props, instance, isFull) {
 function render(ctx, methods, instance) {
     var state = ctx.state, insideState = ctx.insideState;
     var resize = methods.resize, full = methods.full, top = methods.top;
+    var headerCustomer = state.headerCustomer || renderBuiltInHeader;
     return (React.createElement(animated.div, { style: __assign(__assign(__assign({}, state.style), { zIndex: state.zIndex }), ctx.spProps), className: clsx('m78-wine', state.className), ref: ctx.wrapElRef, onTouchStart: top, onMouseDown: top },
         React.createElement("div", { className: "m78-wine_decorate" },
-            renderBuiltInHeader({
+            headerCustomer({
                 ref: ctx.headerElRef,
                 onDoubleClick: function () { return (insideState.isFull ? resize() : full()); },
             }, instance, insideState.isFull),
@@ -710,4 +711,4 @@ var Wine = create({
 });
 
 export default Wine;
-export { keypressAndClick };
+export { WineBoundEnum, WineDragPositionEnum, keypressAndClick };

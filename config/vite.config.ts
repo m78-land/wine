@@ -7,7 +7,10 @@ export default defineConfig({
   plugins: [reactRefresh()],
   resolve: {
     alias: {
-      '@m78/admin': path.resolve(__dirname, '../src'),
+      '@m78/wine': path.resolve(__dirname, '../src'),
     },
   },
+  build: {
+    outDir: 'example',
+  }
 });

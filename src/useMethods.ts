@@ -109,7 +109,11 @@ export function useMethods(context: WineContext) {
     let [width, height] = self.memoWrapSize || [];
 
     if (!isNumber(x) || !isNumber(y)) {
-      const size = calcAlignment(state.alignment, self.availableSize);
+      const size = calcAlignment(state.alignment, self.availableSize, {
+        ...DEFAULT_FULL_LIMIT_BOUND,
+        ...state.limitBound,
+      });
+
       x = size[0];
       y = size[1];
     }

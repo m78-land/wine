@@ -4,12 +4,16 @@ import { BoundMeta, BoundSizeMeta, TupleNumber, WineContext, _TipNodeStatusItem 
 import { DEFAULT_FULL_LIMIT_BOUND, TIP_NODE_KEY } from './consts';
 
 /** 根据alignment值获取x, y值 */
-export function calcAlignment(alignment: TupleNumber, availableSize: TupleNumber) {
+export function calcAlignment(
+  alignment: TupleNumber,
+  availableSize: TupleNumber,
+  limit: BoundMeta,
+) {
   const [sW, sH] = availableSize;
   const [aX, aY] = alignment;
 
-  const x = sW * aX;
-  const y = sH * aY;
+  const x = (sW + limit.left) * aX;
+  const y = (sH + limit.top) * aY;
 
   return [x, y];
 }

@@ -2,7 +2,7 @@ import { AnyFunction } from '@lxjx/utils';
 import React from 'react';
 import { BoundMeta, BoundSizeMeta, TupleNumber, WineContext, _TipNodeStatusItem } from './types';
 /** 根据alignment值获取x, y值 */
-export declare function calcAlignment(alignment: TupleNumber, availableSize: TupleNumber): number[];
+export declare function calcAlignment(alignment: TupleNumber, availableSize: TupleNumber, limit: BoundMeta): number[];
 /** 根据[number, height]格式的元组取{ w, h }格式的对象 */
 export declare function sizeTuple2Obj(sizeT: TupleNumber): {
     w: number;

@@ -49,6 +49,8 @@ export function render(ctx: WineContext, methods: _Methods, instance: WineInstan
   const { state, insideState } = ctx;
   const { resize, full, top } = methods;
 
+  const headerCustomer = state.headerCustomer || renderBuiltInHeader;
+
   return (
     <animated.div
       style={{
@@ -63,7 +65,7 @@ export function render(ctx: WineContext, methods: _Methods, instance: WineInstan
     >
       {/* decorate这一层用来添加背景、边框，最主要的目的是达到能在根级放一些可以超出根元素的节点而不受overflow影响 */}
       <div className="m78-wine_decorate">
-        {renderBuiltInHeader(
+        {headerCustomer(
           {
             ref: ctx.headerElRef,
             onDoubleClick: () => (insideState.isFull ? resize() : full()),

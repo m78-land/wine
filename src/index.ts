@@ -1,5 +1,5 @@
 import create from '@m78/render-api';
-import { WineInstanceExtend, WineState, WineInstance } from './types';
+import { WineInstanceExtend, WineState } from './types';
 import { keypressAndClick } from './common';
 
 import { DEFAULT_PROPS, NAME_SPACE } from './consts';
@@ -11,5 +11,6 @@ const Wine = create<WineState, WineInstanceExtend>({
   namespace: NAME_SPACE,
 });
 
-export { WineState, WineInstance, keypressAndClick };
+export { keypressAndClick };
+export * from './types';
 export default Wine;

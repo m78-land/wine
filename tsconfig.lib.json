@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "types": [],
     "declaration": true,
     "declarationMap": true,
     "declarationDir": "./dist"
@@ -10,6 +11,6 @@
     "./app.d.ts"
   ],
   "exclude": [
-    "src/docs/**/*"
+    "src/demo/**/*"
   ]
 }
