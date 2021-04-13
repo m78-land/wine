@@ -3,7 +3,7 @@
 
 <br>
 
-<p align="center" style="color:#666">浏览器的窗口库</p>
+<p align="center" style="color:#666">浏览器的窗口库 | browser window library</p>
 
 <br>
 
