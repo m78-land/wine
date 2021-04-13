@@ -1277,6 +1277,19 @@
     react-dom "^17.0.2"
     tslib "^2.1.0"
 
+"@m78/render-api@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/@m78/render-api/-/render-api-1.0.5.tgz#36a7942828659093ccbd7344704a02409ec35046"
+  integrity sha512-Pq/JWAsDca0lasLHhxVAjAY1TUb3uU2yZ3/62girbtChHh0PwV9i4/JI8ioWx+gT2sPatsko918t2xNfV4daRQ==
+  dependencies:
+    "@lxjx/hooks" "^1.16.4"
+    "@lxjx/utils" "^1.11.1"
+    "@types/react" "^17.0.3"
+    "@types/react-dom" "^17.0.3"
+    react "^17.0.1"
+    react-dom "^17.0.2"
+    tslib "^2.1.0"
+
 "@m78/wine@^1.0.0":
   version "1.0.0"
   resolved "https://registry.npmjs.org/@m78/wine/-/wine-1.0.0.tgz#5adbfe25c26f82e617555e7f0513549a1a062680"

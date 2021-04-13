@@ -1,6 +1,6 @@
 {
   "name": "@m78/wine",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "browser window library",
   "keywords": [
     "react",
@@ -32,7 +32,7 @@
   "dependencies": {
     "@lxjx/hooks": "^1.16.4",
     "@lxjx/utils": "^1.11.1",
-    "@m78/render-api": "^1.0.4",
+    "@m78/render-api": "^1.0.5",
     "@m78/wine": "^1.0.0",
     "@types/lodash": "^4.14.168",
     "@types/react": "^17.0.3",
