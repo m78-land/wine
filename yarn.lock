@@ -1264,19 +1264,6 @@
     "@types/node" "^13.11.0"
     uuid "^7.0.2"
 
-"@m78/render-api@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.npmjs.org/@m78/render-api/-/render-api-1.0.4.tgz#efd5b48b37275a9024cee887cc198411d79eb324"
-  integrity sha512-GlGGsjSBwGK0KMSf++qRb/MJHSRyXVD82foF+Y3yv2gAxZkIilOpNFerzMaBJATT6PFVPi0ay7ZSJFoKmGAymQ==
-  dependencies:
-    "@lxjx/hooks" "^1.16.4"
-    "@lxjx/utils" "^1.11.1"
-    "@types/react" "^17.0.3"
-    "@types/react-dom" "^17.0.3"
-    react "^17.0.1"
-    react-dom "^17.0.2"
-    tslib "^2.1.0"
-
 "@m78/render-api@^1.0.5":
   version "1.0.5"
   resolved "https://registry.npmjs.org/@m78/render-api/-/render-api-1.0.5.tgz#36a7942828659093ccbd7344704a02409ec35046"
@@ -1288,25 +1275,6 @@
     "@types/react-dom" "^17.0.3"
     react "^17.0.1"
     react-dom "^17.0.2"
-    tslib "^2.1.0"
-
-"@m78/wine@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/@m78/wine/-/wine-1.0.0.tgz#5adbfe25c26f82e617555e7f0513549a1a062680"
-  integrity sha512-3gS78+f3L4QMftYW8NwSyK7tNJR/cevPO2rfePMsnXtc6ejVz5nxVDvVVcm82F2z6kdTw15X5knc3XKBl+nMqA==
-  dependencies:
-    "@lxjx/hooks" "^1.16.4"
-    "@lxjx/utils" "^1.11.1"
-    "@m78/render-api" "^1.0.4"
-    "@types/lodash" "^4.14.168"
-    "@types/react" "^17.0.3"
-    "@types/react-dom" "^17.0.3"
-    clsx "^1.1.1"
-    lodash "^4.17.21"
-    react "^17.0.1"
-    react-dom "^17.0.2"
-    react-spring "9.0.0-rc.3"
-    react-use-gesture "^9.1.3"
     tslib "^2.1.0"
 
 "@mdn/browser-compat-data@^2.0.7":
