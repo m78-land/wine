@@ -1,6 +1,13 @@
 import { AnyFunction } from '@lxjx/utils';
 import React from 'react';
-import { BoundMeta, BoundSizeMeta, TupleNumber, WineContext, _TipNodeStatusItem } from './types';
+import {
+  BoundMeta,
+  BoundSizeMeta,
+  TupleNumber,
+  WineContext,
+  _TipNodeStatusItem,
+  _WineSelf,
+} from './types';
 import { DEFAULT_FULL_LIMIT_BOUND, TIP_NODE_KEY } from './consts';
 
 /** 根据alignment值获取x, y值 */
@@ -8,14 +15,19 @@ export function calcAlignment(
   alignment: TupleNumber,
   availableSize: TupleNumber,
   limit: BoundMeta,
+  self: _WineSelf,
 ) {
-  const [sW, sH] = availableSize;
+  // 实际可用的空间 * 定位位置比 + 左上的limit偏移
+  const [aW, aH] = self.availableSize;
+  const w = aW - limit.left - limit.right;
+  const h = aH - limit.top - limit.bottom;
+
   const [aX, aY] = alignment;
 
-  const x = (sW + limit.left) * aX;
-  const y = (sH + limit.top) * aY;
+  const x = w * aX;
+  const y = h * aY;
 
-  return [x, y];
+  return [x + limit.left, y + limit.top];
 }
 
 /** 根据[number, height]格式的元组取{ w, h }格式的对象 */

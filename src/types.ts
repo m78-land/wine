@@ -143,6 +143,8 @@ export interface WineInsideState {
   isFull?: boolean;
   /** 顶栏高度，只在顶部与内置高度不同时设置 */
   headerHeight?: number;
+  /** 用于重置节点 */
+  refreshKey?: string;
 }
 
 /** 扩展的实例属性和方法 */
@@ -155,7 +157,7 @@ export interface WineInstanceExtend {
   full: () => void;
   /** 重置大小 */
   resize: () => void;
-  /** 刷新bound、尺寸等信息 */
+  /** 刷新节点(渲染的组件会被卸载并重绘) */
   refresh: () => void;
 }
 

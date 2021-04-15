@@ -14,7 +14,7 @@ const renderBuiltInHeader: NonNullable<WineProps['state']['headerCustomer']> = (
   return (
     <div className="m78-wine_header" {...props}>
       <div className="m78-wine_header-content">{instance.state.headerNode}</div>
-      <div className="m78-wine_header-actions" onClick={e => e.stopPropagation()}>
+      <div className="m78-wine_header-actions" onMouseDown={e => e.stopPropagation()}>
         <span tabIndex={1} className="m78-wine_btn" {...keypressAndClick(instance.hide)}>
           <span className="m78-wine_hide-btn" />
         </span>
@@ -80,7 +80,7 @@ export function render(ctx: WineContext, methods: _Methods, instance: WineInstan
             top: insideState.headerHeight,
           }}
         >
-          {state.content}
+          <React.Fragment key={insideState.refreshKey}>{state.content}</React.Fragment>
         </div>
       </div>
       <div className="m78-wine_drag-line-l" ref={ctx.dragLineLRef} />

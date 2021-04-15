@@ -3,9 +3,9 @@ import { __assign } from 'tslib';
 import React, { useRef, useEffect, useMemo } from 'react';
 import { createEvent, useFn, useSetState, useSelf } from '@lxjx/hooks';
 import { animated, useSpring, config } from 'react-spring';
+import { isNumber, defer, createRandString } from '@lxjx/utils';
 import _clamp from 'lodash/clamp';
 import _throttle from 'lodash/throttle';
-import { isNumber, defer } from '@lxjx/utils';
 import { useDrag } from 'react-use-gesture';
 import clsx from 'clsx';
 
@@ -71,12 +71,15 @@ var TIP_NODE_KEY = 'J__M78__TIP__NODE';
 var NAME_SPACE = 'M78__WINE';
 
 /** 根据alignment值获取x, y值 */
-function calcAlignment(alignment, availableSize, limit) {
-    var sW = availableSize[0], sH = availableSize[1];
+function calcAlignment(alignment, availableSize, limit, self) {
+    // 实际可用的空间 * 定位位置比 + 左上的limit偏移
+    var _a = self.availableSize, aW = _a[0], aH = _a[1];
+    var w = aW - limit.left - limit.right;
+    var h = aH - limit.top - limit.bottom;
     var aX = alignment[0], aY = alignment[1];
-    var x = (sW + limit.left) * aX;
-    var y = (sH + limit.top) * aY;
-    return [x, y];
+    var x = w * aX;
+    var y = h * aY;
+    return [x + limit.left, y + limit.top];
 }
 /** 根据[number, height]格式的元组取{ w, h }格式的对象 */
 function sizeTuple2Obj(sizeT) {
@@ -300,7 +303,7 @@ function useMethods(context) {
         var y = self.memoY;
         var _a = self.memoWrapSize || [], width = _a[0], height = _a[1];
         if (!isNumber(x) || !isNumber(y)) {
-            var size = calcAlignment(state.alignment, self.availableSize, __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), state.limitBound));
+            var size = calcAlignment(state.alignment, self.availableSize, __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), state.limitBound), self);
             x = size[0];
             y = size[1];
         }
@@ -589,6 +592,7 @@ function useLifeCycle(ctx, methods) {
         return [_cursorOffset, (distance || 0) + Math.abs(dX) + Math.abs(dY)];
     }, {
         domTarget: headerElRef,
+        filterTaps: true,
     });
     ctx.dragLineRRef = useDragResize(WineDragPositionEnum.R, ctx, methods);
     ctx.dragLineLRef = useDragResize(WineDragPositionEnum.L, ctx, methods);
@@ -604,7 +608,7 @@ function useLifeCycle(ctx, methods) {
 var renderBuiltInHeader = function (props, instance, isFull) {
     return (React.createElement("div", __assign({ className: "m78-wine_header" }, props),
         React.createElement("div", { className: "m78-wine_header-content" }, instance.state.headerNode),
-        React.createElement("div", { className: "m78-wine_header-actions", onClick: function (e) { return e.stopPropagation(); } },
+        React.createElement("div", { className: "m78-wine_header-actions", onMouseDown: function (e) { return e.stopPropagation(); } },
             React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(instance.hide)),
                 React.createElement("span", { className: "m78-wine_hide-btn" })),
             isFull && (React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(instance.current.resize)),
@@ -627,7 +631,8 @@ function render(ctx, methods, instance) {
             }, instance, insideState.isFull),
             React.createElement("div", { className: "m78-wine_content m78-wine_scrollbar", style: {
                     top: insideState.headerHeight,
-                } }, state.content)),
+                } },
+                React.createElement(React.Fragment, { key: insideState.refreshKey }, state.content))),
         React.createElement("div", { className: "m78-wine_drag-line-l", ref: ctx.dragLineLRef }),
         React.createElement("div", { className: "m78-wine_drag-line-t", ref: ctx.dragLineTRef }),
         React.createElement("div", { className: "m78-wine_drag-line-r", ref: ctx.dragLineRRef }),
@@ -643,6 +648,7 @@ var WineImpl = function (props) {
     var _a = useSetState(function () { return ({
         isFull: false,
         headerHeight: undefined,
+        refreshKey: createRandString(),
     }); }), insideState = _a[0], setInsideState = _a[1];
     var wrapElRef = useRef(null);
     var headerElRef = useRef(null);
@@ -697,7 +703,11 @@ var WineImpl = function (props) {
             top: methods.top,
             full: methods.full,
             resize: methods.resize,
-            refresh: function () { },
+            refresh: function () {
+                setInsideState({
+                    refreshKey: createRandString(),
+                });
+            },
         };
         return instance;
     }, []);

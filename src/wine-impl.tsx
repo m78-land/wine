@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { useSelf, useSetState } from '@lxjx/hooks';
 import { config, useSpring } from 'react-spring';
+import { createRandString } from '@lxjx/utils';
 import {
   _WineSelf,
   WineAnimateProps,
@@ -26,6 +27,7 @@ const WineImpl = (props: WineProps) => {
   const [insideState, setInsideState] = useSetState<WineInsideState>(() => ({
     isFull: false,
     headerHeight: undefined,
+    refreshKey: createRandString(),
   }));
 
   const wrapElRef = useRef<HTMLDivElement>(null!);
@@ -87,7 +89,11 @@ const WineImpl = (props: WineProps) => {
       top: methods.top,
       full: methods.full,
       resize: methods.resize,
-      refresh: () => {},
+      refresh: () => {
+        setInsideState({
+          refreshKey: createRandString(),
+        });
+      },
     };
     return instance as WineInstance;
   }, []);

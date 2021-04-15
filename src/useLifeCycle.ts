@@ -110,6 +110,7 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
     },
     {
       domTarget: headerElRef,
+      filterTaps: true,
     },
   );
 
