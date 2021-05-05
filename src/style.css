@@ -30,6 +30,7 @@
   background-color: #3c3c3c;
   color: #fff;
   user-select: none;
+  touch-action: none;
 }
 
 .m78-wine_header-content {
@@ -47,10 +48,10 @@
 
 .m78-wine_content {
   position: absolute;
-  top: 52px;
-  bottom: 4px;
-  left: 4px; /* 预留边框/滚动条位置 */
-  right: 4px;
+  top: 48px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   overflow: auto;
 }
 

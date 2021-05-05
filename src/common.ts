@@ -57,7 +57,7 @@ export function getSizeByState(state: WineContext['state']) {
   if (!h) h = state.sizeRatio * window.innerHeight;
   if (!w) w = h * 1.3;
 
-  return [w, h] as TupleNumber;
+  return [Math.floor(w), Math.floor(h)] as TupleNumber;
 }
 
 /** 创建一个空的dom节点 */

@@ -90,8 +90,8 @@ export function useMethods(context: WineContext) {
 
   /** 设置XY并更新到self中的快捷方式，同时也支持传入其他配置 */
   function setXY(x: number, y: number, extra?: any) {
-    self.x = _clamp(x, self.bound.left, self.bound.right);
-    self.y = _clamp(y, self.bound.top, self.bound.bottom);
+    self.x = Math.floor(_clamp(x, self.bound.left, self.bound.right));
+    self.y = Math.floor(_clamp(y, self.bound.top, self.bound.bottom));
 
     return update({
       x: self.x,

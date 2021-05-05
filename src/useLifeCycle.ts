@@ -41,7 +41,7 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
 
       defer(() => {
         setInsideState({
-          headerHeight: self.headerSize[1] + 4 /* 预设间隔 见.m78-wine_content */,
+          headerHeight: self.headerSize[1],
         });
       });
     });
@@ -92,7 +92,9 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
   });
 
   useDrag(
-    ({ memo = [], xy, down, delta: [dX, dY] }) => {
+    ({ memo = [], xy, down, delta: [dX, dY], event }) => {
+      event.preventDefault();
+
       /*
        * cursorOffset记录事件开始时相对wrap左上角的位置
        * distance记录移动的总距离
@@ -111,6 +113,9 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
     {
       domTarget: headerElRef,
       filterTaps: true,
+      eventOptions: {
+        passive: false,
+      },
     },
   );
 

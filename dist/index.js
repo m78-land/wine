@@ -107,7 +107,7 @@ function getSizeByState(state) {
         h = state.sizeRatio * window.innerHeight;
     if (!w)
         w = h * 1.3;
-    return [w, h];
+    return [Math.floor(w), Math.floor(h)];
 }
 /** 创建一个空的dom节点 */
 function getTipNode() {
@@ -293,8 +293,8 @@ function useMethods(context) {
     }
     /** 设置XY并更新到self中的快捷方式，同时也支持传入其他配置 */
     function setXY(x, y, extra) {
-        self.x = _clamp(x, self.bound.left, self.bound.right);
-        self.y = _clamp(y, self.bound.top, self.bound.bottom);
+        self.x = Math.floor(_clamp(x, self.bound.left, self.bound.right));
+        self.y = Math.floor(_clamp(y, self.bound.top, self.bound.bottom));
         return update(__assign({ x: self.x, y: self.y, immediate: true, default: true }, extra));
     }
     /** 根据当前窗口信息和alignment设置窗口位置, 如果包含缓存的窗口信息则使用缓存信息 */
@@ -533,7 +533,7 @@ function useLifeCycle(ctx, methods) {
             state.initFull ? full() : resize();
             defer(function () {
                 setInsideState({
-                    headerHeight: self.headerSize[1] + 4 /* 预设间隔 见.m78-wine_content */,
+                    headerHeight: self.headerSize[1],
                 });
             });
         });
@@ -578,7 +578,8 @@ function useLifeCycle(ctx, methods) {
         }
     });
     useDrag(function (_a) {
-        var _b = _a.memo, memo = _b === void 0 ? [] : _b, xy = _a.xy, down = _a.down, _c = _a.delta, dX = _c[0], dY = _c[1];
+        var _b = _a.memo, memo = _b === void 0 ? [] : _b, xy = _a.xy, down = _a.down, _c = _a.delta, dX = _c[0], dY = _c[1], event = _a.event;
+        event.preventDefault();
         /*
          * cursorOffset记录事件开始时相对wrap左上角的位置
          * distance记录移动的总距离
@@ -593,6 +594,9 @@ function useLifeCycle(ctx, methods) {
     }, {
         domTarget: headerElRef,
         filterTaps: true,
+        eventOptions: {
+            passive: false,
+        },
     });
     ctx.dragLineRRef = useDragResize(WineDragPositionEnum.R, ctx, methods);
     ctx.dragLineLRef = useDragResize(WineDragPositionEnum.L, ctx, methods);
