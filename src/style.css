@@ -48,10 +48,10 @@
 
 .m78-wine_content {
   position: absolute;
-  top: 48px;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  top: 52px;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
   overflow: auto;
 }
 

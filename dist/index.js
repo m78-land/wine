@@ -533,7 +533,7 @@ function useLifeCycle(ctx, methods) {
             state.initFull ? full() : resize();
             defer(function () {
                 setInsideState({
-                    headerHeight: self.headerSize[1],
+                    headerHeight: self.headerSize[1] + 4 /* 预设间隔 见.m78-wine_content */,
                 });
             });
         });

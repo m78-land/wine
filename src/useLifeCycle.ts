@@ -41,7 +41,7 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
 
       defer(() => {
         setInsideState({
-          headerHeight: self.headerSize[1],
+          headerHeight: self.headerSize[1] + 4 /* 预设间隔 见.m78-wine_content */,
         });
       });
     });
