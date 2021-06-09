@@ -2,22 +2,8 @@ import React, { MutableRefObject, RefObject } from 'react';
 import { PickAnimated, SpringValues } from 'react-spring';
 import { SetState } from '@lxjx/hooks';
 import { RenderApiComponentBaseProps, RenderApiComponentInstance } from '@m78/render-api';
+import { TupleNumber, Bound } from '@lxjx/utils';
 import { DEFAULT_PROPS } from './consts';
-export declare type TupleNumber = [number, number];
-/** 描述位置信息 */
-export declare type BoundMeta = {
-    left: number;
-    top: number;
-    right: number;
-    bottom: number;
-};
-/** 描述位置和尺寸信息 */
-export declare type BoundSizeMeta = {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-};
 /** 内部实例属性 */
 export interface _WineSelf {
     /** y轴位置，从动画中同步 */
@@ -35,13 +21,12 @@ export interface _WineSelf {
     /** 顶栏尺寸信息 */
     headerSize: TupleNumber;
     /** 当前使用的边界限制 */
-    bound: BoundMeta;
+    bound: Bound;
     /** 当前的窗口限制信息 (即使使用safeArea，依然会在其他地方用到windowBound, 所以单独将其抽离出来) */
-    windowBound: BoundMeta;
+    windowBound: Bound;
     /** 记录窗口位置尺寸等信息，全屏时设置，窗口大小切换时移除 */
     memoWrapSize?: TupleNumber;
-    memoX?: number;
-    memoY?: number;
+    memoXY?: TupleNumber;
     /** 用于resize提示的节点 */
     tipNode?: HTMLDivElement;
     /** 组件是否已卸载 */
@@ -70,8 +55,8 @@ export interface WineContext {
     dragLineLBRef: MutableRefObject<HTMLDivElement>;
     state: WineProps['state'] & typeof DEFAULT_PROPS;
     setState: WineProps['instance']['setState'];
-    insideState: WineInsideState;
-    setInsideState: SetState<WineInsideState>;
+    insideState: _WineInsideState;
+    setInsideState: SetState<_WineInsideState>;
     self: _WineSelf;
     spProps: SpringValues<PickAnimated<WineAnimateProps>>;
     /**
@@ -109,31 +94,35 @@ export interface WineState {
     headerCustomer?: (props: any, instance: WineInstance, isFull: boolean) => React.ReactNode;
     /** [0.5, 0.5] | 弹窗在屏幕上的位置, 取值为0 ~ 1 */
     alignment?: TupleNumber;
-    /** 0.84 | 窗口占屏幕高度的比例, 取值为0 ~ 1, 如果未设置width，会根据此项计算得到的高度以合适比例设置宽度 */
+    /** 0.84 | 以浏览器窗口大小的一定比例来设置一个适合的窗口尺寸, 取值为0 ~ 1 */
     sizeRatio?: number;
-    /** 宽度, 覆盖sizeRatio对应方向的配置 */
+    /** 宽度, 会覆盖sizeRatio对应方向的配置 */
     width?: number;
-    /** 高度, 覆盖sizeRatio对应方向的配置 */
+    /** 高度, 会覆盖sizeRatio对应方向的配置 */
     height?: number;
-    /** WineBoundEnum.safeArea | 控制可拖动范围 */
+    /** WineBoundEnum.safeArea | 设置可拖动区域的类型 */
     bound?: WineBoundEnum;
     /** 根据此限定对象进行屏幕可用边界修正, 影响全屏窗口大小和自动调整窗口大小的各种操作 */
-    limitBound?: Partial<BoundMeta>;
+    limitBound?: Partial<Bound>;
+    /** 初始化时最大化显示 */
+    initFull?: boolean;
     /** 根节点额外类名 */
     className?: string;
     /** 根节点额外样式 */
     style?: React.CSSProperties;
-    /** 1000 | zIndex层级，由于内部包含多窗口层级的一些优化，不建议单独修改此项，可以通过config全局更改 */
+    /** 1000 | zIndex层级，由于内部包含多窗口层级的一些优化，不建议单独修改此项，可以通过render api全局更改 */
     zIndex?: number;
-    /** 初始化时最大化显示 */
-    initFull?: boolean;
+    /** 置顶/活动事件、 */
+    onActive?: () => void;
 }
 export interface WineProps extends RenderApiComponentBaseProps<WineState> {
 }
 /** wine内部状态 */
-export interface WineInsideState {
-    /** 是否全屏 */
+export interface _WineInsideState {
+    /** 是否全屏, 应该在任何可能导致切换到非全屏状态的操作后还原此值 */
     isFull?: boolean;
+    /** 是否置顶、活动 */
+    isTop?: boolean;
     /** 顶栏高度，只在顶部与内置高度不同时设置 */
     headerHeight?: number;
     /** 用于重置节点 */
@@ -151,13 +140,10 @@ export interface WineInstanceExtend {
     resize: () => void;
     /** 刷新节点(渲染的组件会被卸载并重绘) */
     refresh: () => void;
+    /** 一些内部使用的实例变量，某些复杂场景可能会用到 */
+    meta: _WineSelf;
 }
 /** wine实例 */
 export interface WineInstance extends RenderApiComponentInstance<WineProps['state'], WineInstanceExtend> {
-}
-/** 表示反馈节点的位置尺寸等信息 */
-export interface _TipNodeStatusItem {
-    size: BoundSizeMeta;
-    bound: BoundSizeMeta;
 }
 //# sourceMappingURL=types.d.ts.map

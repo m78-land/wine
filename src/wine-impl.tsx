@@ -6,9 +6,10 @@ import {
   _WineSelf,
   WineAnimateProps,
   WineContext,
-  WineInsideState,
+  _WineInsideState,
   WineInstance,
   WineProps,
+  WineInstanceExtend,
 } from './types';
 
 import { DEFAULT_PROPS, NO_LIMIT_AREA } from './consts';
@@ -24,7 +25,7 @@ type trimDefaultState = WineProps['state'] & typeof DEFAULT_PROPS;
 const WineImpl = (props: WineProps) => {
   const { state, instance } = props;
 
-  const [insideState, setInsideState] = useSetState<WineInsideState>(() => ({
+  const [insideState, setInsideState] = useSetState<_WineInsideState>(() => ({
     isFull: false,
     headerHeight: undefined,
     refreshKey: createRandString(),
@@ -94,7 +95,8 @@ const WineImpl = (props: WineProps) => {
           refreshKey: createRandString(),
         });
       },
-    };
+      meta: self,
+    } as WineInstanceExtend;
     return instance as WineInstance;
   }, []);
 

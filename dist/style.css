@@ -6,10 +6,6 @@
   outline: none;
 }
 
-.m78-wine.__focus .m78-wine_decorate {
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
-}
-
 .m78-wine,
 .m78-wine * {
   box-sizing: border-box;
@@ -48,10 +44,10 @@
 
 .m78-wine_content {
   position: absolute;
-  top: 52px;
-  bottom: 4px;
-  left: 4px;
-  right: 4px;
+  top: 48px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   overflow: auto;
 }
 
@@ -69,8 +65,8 @@
 
 .m78-wine_drag-line-r,
 .m78-wine_drag-line-l {
-  width: 4px;
-  right: -2px;
+  width: 8px;
+  right: -4px;
   top: 0;
   height: 100%;
   cursor: ew-resize;
@@ -84,9 +80,9 @@
 .m78-wine_drag-line-t,
 .m78-wine_drag-line-b {
   cursor: ns-resize;
-  height: 4px;
+  height: 8px;
   width: 100%;
-  top: -2px;
+  top: -4px;
   left: 0;
 }
 
@@ -99,33 +95,33 @@
 .m78-wine_drag-line-lb,
 .m78-wine_drag-line-lt,
 .m78-wine_drag-line-rt {
-  width: 10px;
-  height: 10px;
+  width: 16px;
+  height: 16px;
   z-index: 101;
   border-radius: 50%;
 }
 
 .m78-wine_drag-line-rb {
-  right: -4px;
-  bottom: -4px;
+  right: -6px;
+  bottom: -6px;
   cursor: nw-resize;
 }
 
 .m78-wine_drag-line-lt {
-  left: -4px;
-  top: -4px;
+  left: -6px;
+  top: -6px;
   cursor: nw-resize;
 }
 
 .m78-wine_drag-line-lb {
-  left: -4px;
-  bottom: -4px;
+  left: -6px;
+  bottom: -6px;
   cursor: ne-resize;
 }
 
 .m78-wine_drag-line-rt {
-  right: -4px;
-  top: -4px;
+  right: -6px;
+  top: -6px;
   cursor: ne-resize;
 }
 
@@ -228,7 +224,8 @@
   border-radius: 4px;
 }
 .m78-wine_scrollbar::-webkit-scrollbar {
-  width: 7px;
+  width: 6px;
+  height: 6px;
 }
 .m78-wine_scrollbar::-webkit-scrollbar-thumb {
   background-color: #999;

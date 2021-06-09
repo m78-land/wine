@@ -1,6 +1,6 @@
 {
   "name": "@m78/wine",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "description": "browser window library",
   "keywords": [
     "react",
@@ -30,8 +30,8 @@
     "build:example": "vite build --config config/vite.config.ts"
   },
   "dependencies": {
-    "@lxjx/hooks": "^1.16.4",
-    "@lxjx/utils": "^1.11.1",
+    "@lxjx/hooks": "^1.17.0",
+    "@lxjx/utils": "^1.14.0",
     "@m78/render-api": "^1.0.5",
     "@types/lodash": "^4.14.168",
     "@types/react": "^17.0.3",

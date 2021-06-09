@@ -55,10 +55,13 @@ export function render(ctx: WineContext, methods: _Methods, instance: WineInstan
     <animated.div
       style={{
         ...state.style,
-        zIndex: state.zIndex,
+        zIndex: insideState.isTop ? state.zIndex + 1 : state.zIndex,
         ...(ctx.spProps as any),
       }}
-      className={clsx('m78-wine', state.className)}
+      className={clsx('m78-wine', state.className, {
+        __full: insideState.isFull,
+        __active: insideState.isTop,
+      })}
       ref={ctx.wrapElRef}
       onTouchStart={top}
       onMouseDown={top}

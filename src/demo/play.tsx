@@ -27,21 +27,33 @@ const Play = () => {
   }, []);
 
   function renderHandle() {
-    Wine.render({
+    const t = Wine.render({
       content: <Test />,
-      sizeRatio: 0.5,
+      // sizeRatio: 0.5,
       alignment: [0.5, 0.5],
-      // limitBound: {
-      //   left: 200,
-      //   top: 200,
-      //   right: 100,
-      //   bottom: 100,
-      // }
+      limitBound: {
+        left: 200,
+        top: 200,
+        right: 100,
+        bottom: 100,
+      },
     });
+
+    console.log(t);
   }
 
   return (
     <div>
+      <div
+        style={{
+          position: 'fixed',
+          left: 200,
+          top: 200,
+          right: 100,
+          bottom: 100,
+          border: '1px solid red',
+        }}
+      />
       <Wine.RenderBoxTarget />
       <button onClick={renderHandle}>render window</button>
     </div>

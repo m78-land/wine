@@ -1,8 +1,8 @@
-import { AnyFunction } from '@lxjx/utils';
+import { AnyFunction, TupleNumber, Bound, BoundSize } from '@lxjx/utils';
 import React from 'react';
-import { BoundMeta, BoundSizeMeta, TupleNumber, WineContext, _TipNodeStatusItem, _WineSelf } from './types';
+import { WineContext, _WineSelf } from './types';
 /** 根据alignment值获取x, y值 */
-export declare function calcAlignment(alignment: TupleNumber, availableSize: TupleNumber, limit: BoundMeta, self: _WineSelf): number[];
+export declare function calcAlignment(alignment: TupleNumber, limit: Bound, self: _WineSelf): number[];
 /** 根据[number, height]格式的元组取{ w, h }格式的对象 */
 export declare function sizeTuple2Obj(sizeT: TupleNumber): {
     w: number;
@@ -13,16 +13,16 @@ export declare function offsetTuple2Obj(offsetT: TupleNumber): {
     x: number;
     y: number;
 };
-/** 根据状态获取当前尺寸 */
+/** 根据state状态获取当前尺寸 */
 export declare function getSizeByState(state: WineContext['state']): TupleNumber;
 /** 创建一个空的dom节点 */
 export declare function getTipNode(): HTMLDivElement | undefined;
 /** 检测指定的xy点是否在 */
-export declare function checkPointerInBound([x, y]: TupleNumber, bound: BoundSizeMeta): boolean;
+export declare function checkPointerInBound([x, y]: TupleNumber, bound: BoundSize): boolean;
 /** 便捷获取尺寸对象 */
-export declare function sizeBoundHelper(left: number, top: number, width: number, height: number): BoundSizeMeta;
+export declare function sizeBoundHelper(left: number, top: number, width: number, height: number): BoundSize;
 /** 传入光标位置、屏幕相关信息，获取触发tip节点的方向信息 */
-export declare function getTipNodeStatus([fW, fH]: TupleNumber, xy: TupleNumber, limitBound?: Partial<BoundMeta>): _TipNodeStatusItem | undefined;
+export declare function getTipNodeStatus([fW, fH]: TupleNumber, xy: TupleNumber, limitBound?: Partial<Bound>): BoundSize | undefined;
 /**
  * 便捷的按键和点击时间绑定  TODO: 提到utils
  * @param handle - 时间处理函数
@@ -32,4 +32,6 @@ export declare function keypressAndClick(handle: AnyFunction, spaceTrigger?: boo
     onClick: AnyFunction;
     onKeyPress: (e: React.KeyboardEvent) => void;
 };
+/** 根据state获取fullSize */
+export declare function getFullSize(_state: WineContext['state']): TupleNumber;
 //# sourceMappingURL=common.d.ts.map

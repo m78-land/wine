@@ -1,4 +1,5 @@
-import { TupleNumber, WineBoundEnum } from './types';
+import { TupleNumber } from '@lxjx/utils';
+import { WineBoundEnum } from './types';
 /** 无bound限制 */
 export declare const NO_LIMIT_AREA: {
     left: number;

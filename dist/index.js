@@ -71,8 +71,7 @@ var TIP_NODE_KEY = 'J__M78__TIP__NODE';
 var NAME_SPACE = 'M78__WINE';
 
 /** 根据alignment值获取x, y值 */
-function calcAlignment(alignment, availableSize, limit, self) {
-    // 实际可用的空间 * 定位位置比 + 左上的limit偏移
+function calcAlignment(alignment, limit, self) {
     var _a = self.availableSize, aW = _a[0], aH = _a[1];
     var w = aW - limit.left - limit.right;
     var h = aH - limit.top - limit.bottom;
@@ -95,19 +94,29 @@ function offsetTuple2Obj(offsetT) {
         y: offsetT[1],
     };
 }
-/** 根据状态获取当前尺寸 */
+/** 根据state状态获取当前尺寸 */
 function getSizeByState(state) {
     var w;
     var h;
+    var _a = getFullSize(state), fW = _a[0], fH = _a[1];
     if (state.width)
         w = state.width;
     if (state.height)
         h = state.height;
-    if (!h)
-        h = state.sizeRatio * window.innerHeight;
-    if (!w)
-        w = h * 1.3;
-    return [Math.floor(w), Math.floor(h)];
+    // 横纵屏与不同的方式作用sizeRatio, 横屏以高度为基准，竖屏一宽度为基准
+    if (fW > fH) {
+        if (!h)
+            h = state.sizeRatio * fH;
+        if (!w)
+            w = h * 1.3;
+    }
+    else {
+        if (!w)
+            w = state.sizeRatio * fW;
+        if (!h)
+            h = w / 1.3;
+    }
+    return [Math.min(Math.floor(w), fW), Math.min(Math.floor(h), fH)];
 }
 /** 创建一个空的dom节点 */
 function getTipNode() {
@@ -124,14 +133,6 @@ function getTipNode() {
     document.body.appendChild(div);
     return div;
 }
-/** 检测指定的xy点是否在 */
-function checkPointerInBound(_a, bound) {
-    var x = _a[0], y = _a[1];
-    return (x >= bound.left &&
-        x <= bound.left + bound.width &&
-        y >= bound.top &&
-        y <= bound.top + bound.height);
-}
 /** 便捷获取尺寸对象 */
 function sizeBoundHelper(left, top, width, height) {
     return {
@@ -145,79 +146,44 @@ function sizeBoundHelper(left, top, width, height) {
 function getTipNodeStatus(_a, xy, limitBound) {
     var fW = _a[0], fH = _a[1];
     var flb = __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), limitBound);
-    /** 基础偏移 */
-    var offset = 6;
-    /* 区块厚度 */
-    var size = 50;
-    /* 两侧区块占用的宽度 */
-    var sideWidth = fW * 0.2;
-    /* 两侧区块占用的高度 */
-    var sideHeight = fH * 0.2;
-    /* 中间区块占用的高度 */
-    var centerHeight = fH * 0.6;
-    /* 中间区块的宽度 */
-    var centerWidth = fW * 0.6;
     /* 全屏高度的一半 */
     var fHHalf = fH / 2;
     /* 全屏宽度的一半 */
     var fWHalf = fW / 2;
-    /* TODO: 下方的一些计算可以抽取为通用变量来提升一点点性能 */
-    var tBound = sizeBoundHelper(sideWidth + size + flb.left, offset + flb.top, centerWidth, size);
-    if (checkPointerInBound(xy, tBound)) {
-        return {
-            bound: tBound,
-            size: sizeBoundHelper(flb.left, flb.top, fW, fHHalf),
-        };
-    }
-    var rBound = sizeBoundHelper(fW - size - offset + flb.left, sideHeight + offset + flb.top, size, centerHeight);
-    if (checkPointerInBound(xy, rBound)) {
-        return {
-            bound: rBound,
-            size: sizeBoundHelper(fWHalf + flb.left, flb.top, fWHalf, fH),
-        };
-    }
-    var bBound = sizeBoundHelper(sideWidth + offset + flb.left, fH - size - offset + flb.top, centerWidth, size);
-    if (checkPointerInBound(xy, bBound)) {
-        return {
-            bound: bBound,
-            size: sizeBoundHelper(flb.left, fHHalf + flb.top, fW, fHHalf),
-        };
-    }
-    var lBound = sizeBoundHelper(offset + flb.left, sideHeight + offset + flb.top, size, centerHeight);
-    if (checkPointerInBound(xy, lBound)) {
-        return {
-            bound: bBound,
-            size: sizeBoundHelper(flb.left, flb.top, fWHalf, fH),
-        };
-    }
-    var ltBound = sizeBoundHelper(offset + flb.left, offset + flb.top, size, size);
-    if (checkPointerInBound(xy, ltBound)) {
-        return {
-            bound: ltBound,
-            size: sizeBoundHelper(flb.left, flb.top, fWHalf, fHHalf),
-        };
-    }
-    var lbBound = sizeBoundHelper(offset + flb.left, fH - offset - size + flb.top, size, size);
-    if (checkPointerInBound(xy, lbBound)) {
-        return {
-            bound: lbBound,
-            size: sizeBoundHelper(flb.left, fHHalf + flb.top, fWHalf, fHHalf),
-        };
-    }
-    var rtBound = sizeBoundHelper(fW - offset - size + flb.left, offset + flb.top, size, size);
-    if (checkPointerInBound(xy, rtBound)) {
-        return {
-            bound: rtBound,
-            size: sizeBoundHelper(fWHalf + flb.left, flb.top, fWHalf, fHHalf),
-        };
-    }
-    var rbBound = sizeBoundHelper(fW - offset - size + flb.left, fH - offset - size + flb.top, size, size);
-    if (checkPointerInBound(xy, rbBound)) {
-        return {
-            bound: rbBound,
-            size: sizeBoundHelper(fWHalf + flb.left, fHHalf + flb.top, fWHalf, fHHalf),
-        };
-    }
+    var x = xy[0], y = xy[1];
+    /* 以下4变量偏移1px是为了防止全屏时光标无法移动到边缘外，所以主动减少区域 */
+    // 可用区域右侧
+    var avaRight = flb.left + fW - 1;
+    // 可用区域底部
+    var avaBottom = flb.top + fH - 1;
+    /** 光标是否在水平方向的中部 */
+    var cursorInHorizontalCenter = x > flb.left + 1 && x < avaRight;
+    /** 光标是否在垂直方向的中部 */
+    var cursorInVerticalCenter = y > flb.top + 1 && y < avaBottom;
+    var inTop = y <= flb.top && cursorInHorizontalCenter;
+    if (inTop)
+        return sizeBoundHelper(flb.left, flb.top, fW, fHHalf);
+    var inRight = x >= avaRight && cursorInVerticalCenter;
+    if (inRight)
+        return sizeBoundHelper(fWHalf + flb.left, flb.top, fWHalf, fH);
+    var inBottom = y >= avaBottom && cursorInHorizontalCenter;
+    if (inBottom)
+        return sizeBoundHelper(flb.left, fHHalf + flb.top, fW, fHHalf);
+    var inLeft = x <= flb.left && cursorInVerticalCenter;
+    if (inLeft)
+        return sizeBoundHelper(flb.left, flb.top, fWHalf, fH);
+    var inLT = x <= flb.left && y <= flb.top;
+    if (inLT)
+        return sizeBoundHelper(flb.left, flb.top, fWHalf, fHHalf);
+    var inLB = x <= flb.left && y >= avaBottom;
+    if (inLB)
+        return sizeBoundHelper(flb.left, fHHalf + flb.top, fWHalf, fHHalf);
+    var inRT = x >= avaRight && y <= flb.top;
+    if (inRT)
+        return sizeBoundHelper(fWHalf + flb.left, flb.top, fWHalf, fHHalf);
+    var inRB = x >= avaRight && y >= avaBottom;
+    if (inRB)
+        return sizeBoundHelper(fWHalf + flb.left, fHHalf + flb.top, fWHalf, fHHalf);
 }
 /**
  * 便捷的按键和点击时间绑定  TODO: 提到utils
@@ -236,12 +202,23 @@ function keypressAndClick(handle, spaceTrigger) {
         },
     };
 }
+/** 根据state获取fullSize */
+function getFullSize(_state) {
+    var fullSize = [window.innerWidth, window.innerHeight];
+    if (_state.limitBound) {
+        var flb = __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), _state.limitBound);
+        var fW = fullSize[0] - flb.left - flb.right;
+        var fH = fullSize[1] - flb.top - flb.bottom;
+        fullSize = [fW, fH];
+    }
+    return fullSize;
+}
 
 /** 某个窗口点击时通知其他窗口更新zIndex */
 var updateZIndexEvent = createEvent();
 
 function useMethods(context) {
-    var state = context.state, setState = context.setState, self = context.self, wrapElRef = context.wrapElRef, headerElRef = context.headerElRef, update = context.update, insideState = context.insideState, setInsideState = context.setInsideState;
+    var state = context.state, self = context.self, wrapElRef = context.wrapElRef, headerElRef = context.headerElRef, update = context.update, insideState = context.insideState, setInsideState = context.setInsideState;
     /** 更新窗口、bound、warp等信息 (不触发render), 在窗口位置、尺寸等变更完毕后应该调用此方法 */
     function refreshDeps() {
         if (self.unmounted)
@@ -256,13 +233,7 @@ function useMethods(context) {
         self.headerSize = [headerW, headerH];
         self.availableSize = [winW - w, winH - h];
         self.winSize = [winW, winH];
-        self.fullSize = [winW, winH];
-        if (state.limitBound) {
-            var flb = __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), state.limitBound);
-            var fW = winW - flb.left - flb.right;
-            var fH = winH - flb.top - flb.bottom;
-            self.fullSize = [fW, fH];
-        }
+        self.fullSize = getFullSize(state);
         setBound();
     }
     /** 计算并设置bound */
@@ -295,22 +266,29 @@ function useMethods(context) {
     function setXY(x, y, extra) {
         self.x = Math.floor(_clamp(x, self.bound.left, self.bound.right));
         self.y = Math.floor(_clamp(y, self.bound.top, self.bound.bottom));
+        if (insideState.isFull) {
+            setInsideState({
+                isFull: false,
+            });
+        }
         return update(__assign({ x: self.x, y: self.y, immediate: true, default: true }, extra));
     }
     /** 根据当前窗口信息和alignment设置窗口位置, 如果包含缓存的窗口信息则使用缓存信息 */
     function resize() {
-        var x = self.memoX;
-        var y = self.memoY;
-        var _a = self.memoWrapSize || [], width = _a[0], height = _a[1];
-        if (!isNumber(x) || !isNumber(y)) {
-            var size = calcAlignment(state.alignment, self.availableSize, __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), state.limitBound), self);
-            x = size[0];
-            y = size[1];
-        }
+        var _a = self.memoXY || [], x = _a[0], y = _a[1];
+        var _b = self.memoWrapSize || [], width = _b[0], height = _b[1];
+        var flb = __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), state.limitBound);
+        // 没有历史尺寸
         if (!isNumber(width) || !isNumber(height)) {
-            var _b = getSizeByState(state), w = _b[0], h = _b[1];
+            var _c = getSizeByState(state), w = _c[0], h = _c[1];
             width = w;
             height = h;
+        }
+        // 没有历史位置
+        if (!isNumber(x) || !isNumber(y)) {
+            var pos = calcAlignment(state.alignment, flb, self);
+            x = pos[0];
+            y = pos[1];
         }
         /** 防止当前限制影响定位 */
         self.bound = NO_LIMIT_AREA;
@@ -319,10 +297,6 @@ function useMethods(context) {
             height: height,
         }).then(function () {
             refreshDeps();
-            insideState.isFull &&
-                setInsideState({
-                    isFull: false,
-                });
         });
     }
     /** 最大化窗口 */
@@ -344,11 +318,13 @@ function useMethods(context) {
         });
     }
     function top() {
+        var _a;
         updateZIndexEvent.emit();
-        if (state.zIndex <= DEFAULT_PROPS.zIndex) {
-            setState({
-                zIndex: DEFAULT_PROPS.zIndex + 1,
+        if (!insideState.isTop) {
+            setInsideState({
+                isTop: true,
             });
+            (_a = state.onActive) === null || _a === void 0 ? void 0 : _a.call(state);
         }
     }
     /** 记录创建基础状态，尺寸、位置等，用于还原 */
@@ -356,8 +332,7 @@ function useMethods(context) {
         var flb = __assign(__assign({}, DEFAULT_FULL_LIMIT_BOUND), state.limitBound);
         self.memoWrapSize = self.wrapSize;
         /** 根据fullLimitBound进行修正，防止默认最大化切换为最小化时窗口跳到最左上角 */
-        self.memoX = Math.max(self.x, flb.left);
-        self.memoY = Math.max(self.y, flb.top);
+        self.memoXY = [Math.max(self.x, flb.left), Math.max(self.y, flb.top)];
     }
     /** 根据光标位置和warp位置来计算光标在wrap上所处位置 */
     function getCursorWrapOffset(xy) {
@@ -373,7 +348,7 @@ function useMethods(context) {
         if (!down) {
             hideTipNode();
             if (tipNodeStatus) {
-                var size = tipNodeStatus.size;
+                var size = tipNodeStatus;
                 setXY(size.left, size.top, {
                     width: size.width,
                     height: size.height,
@@ -383,7 +358,7 @@ function useMethods(context) {
         }
         if (tipNodeStatus) {
             showTipNode();
-            Object.entries(tipNodeStatus.size).forEach(function (_a) {
+            Object.entries(tipNodeStatus).forEach(function (_a) {
                 var key = _a[0], val = _a[1];
                 if (self.tipNode) {
                     var oldVal = self.tipNode.style[key];
@@ -420,7 +395,6 @@ function useMethods(context) {
         refreshDeps: refreshDeps,
         setXY: setXY,
         resize: resize,
-        memoWinState: memoWinState,
         full: full,
         getCursorWrapOffset: getCursorWrapOffset,
         top: top,
@@ -430,7 +404,7 @@ function useMethods(context) {
 
 function useDragResize(type, ctx, methods) {
     var ref = useRef(null);
-    var wrapElRef = ctx.wrapElRef, self = ctx.self, update = ctx.update;
+    var wrapElRef = ctx.wrapElRef, self = ctx.self, update = ctx.update, insideState = ctx.insideState, setInsideState = ctx.setInsideState;
     useDrag(function (_a) {
         var _b = _a.xy, x = _b[0], y = _b[1];
         var wrapBound = wrapElRef.current.getBoundingClientRect();
@@ -466,8 +440,14 @@ function useDragResize(type, ctx, methods) {
             Object.assign(aniObj, getTopMeta(wrapBound, [x, y]));
             aniObj.width = getRightMeta(wrapBound, [x, y]);
         }
+        if (isNumber(aniObj.x))
+            self.x = aniObj.x;
+        if (isNumber(aniObj.y))
+            self.y = aniObj.y;
         update(aniObj).then(function () {
             methods.refreshDeps();
+            if (insideState.isFull)
+                setInsideState({ isFull: false });
         });
     }, {
         domTarget: ref,
@@ -510,7 +490,7 @@ function useDragResize(type, ctx, methods) {
 }
 
 function useLifeCycle(ctx, methods) {
-    var update = ctx.update, state = ctx.state, setState = ctx.setState, headerElRef = ctx.headerElRef, self = ctx.self, setInsideState = ctx.setInsideState;
+    var update = ctx.update, state = ctx.state, headerElRef = ctx.headerElRef, self = ctx.self, setInsideState = ctx.setInsideState, insideState = ctx.insideState;
     var refreshDeps = methods.refreshDeps, resize = methods.resize, setXY = methods.setXY, full = methods.full;
     // 标记销毁
     useEffect(function () { return function () {
@@ -533,7 +513,7 @@ function useLifeCycle(ctx, methods) {
             state.initFull ? full() : resize();
             defer(function () {
                 setInsideState({
-                    headerHeight: self.headerSize[1] + 4 /* 预设间隔 见.m78-wine_content */,
+                    headerHeight: self.headerSize[1],
                 });
             });
         });
@@ -571,15 +551,17 @@ function useLifeCycle(ctx, methods) {
     }, [state.open]);
     // 监听置顶还原
     updateZIndexEvent.useEvent(function () {
-        if (state.zIndex > DEFAULT_PROPS.zIndex) {
-            setState({
-                zIndex: DEFAULT_PROPS.zIndex,
+        if (insideState.isTop) {
+            setInsideState({
+                isTop: false,
             });
         }
     });
     useDrag(function (_a) {
-        var _b = _a.memo, memo = _b === void 0 ? [] : _b, xy = _a.xy, down = _a.down, _c = _a.delta, dX = _c[0], dY = _c[1], event = _a.event;
+        var _b = _a.memo, memo = _b === void 0 ? [] : _b, xy = _a.xy, down = _a.down, _c = _a.delta, dX = _c[0], dY = _c[1], event = _a.event, tap = _a.tap;
         event.preventDefault();
+        if (tap)
+            return;
         /*
          * cursorOffset记录事件开始时相对wrap左上角的位置
          * distance记录移动的总距离
@@ -627,7 +609,10 @@ function render(ctx, methods, instance) {
     var state = ctx.state, insideState = ctx.insideState;
     var resize = methods.resize, full = methods.full, top = methods.top;
     var headerCustomer = state.headerCustomer || renderBuiltInHeader;
-    return (React.createElement(animated.div, { style: __assign(__assign(__assign({}, state.style), { zIndex: state.zIndex }), ctx.spProps), className: clsx('m78-wine', state.className), ref: ctx.wrapElRef, onTouchStart: top, onMouseDown: top },
+    return (React.createElement(animated.div, { style: __assign(__assign(__assign({}, state.style), { zIndex: insideState.isTop ? state.zIndex + 1 : state.zIndex }), ctx.spProps), className: clsx('m78-wine', state.className, {
+            __full: insideState.isFull,
+            __active: insideState.isTop,
+        }), ref: ctx.wrapElRef, onTouchStart: top, onMouseDown: top },
         React.createElement("div", { className: "m78-wine_decorate" },
             headerCustomer({
                 ref: ctx.headerElRef,
@@ -712,6 +697,7 @@ var WineImpl = function (props) {
                     refreshKey: createRandString(),
                 });
             },
+            meta: self,
         };
         return instance;
     }, []);

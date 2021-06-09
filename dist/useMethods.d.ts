@@ -1,9 +1,9 @@
-import { TupleNumber, WineContext } from './types';
+import { TupleNumber } from '@lxjx/utils';
+import { WineContext } from './types';
 export declare function useMethods(context: WineContext): {
     refreshDeps: () => void;
     setXY: (x: number, y: number, extra?: any) => Promise<void>;
     resize: () => void;
-    memoWinState: () => void;
     full: () => void;
     getCursorWrapOffset: (xy: TupleNumber) => number[];
     top: () => void;

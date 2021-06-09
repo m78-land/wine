@@ -1,29 +1,21 @@
 import _clamp from 'lodash/clamp';
 import { useFn } from '@lxjx/hooks';
 import _throttle from 'lodash/throttle';
-import { isNumber } from '@lxjx/utils';
-import { TupleNumber, WineBoundEnum, WineContext } from './types';
+import { isNumber, TupleNumber } from '@lxjx/utils';
+import { WineBoundEnum, WineContext } from './types';
 import {
   calcAlignment,
+  getFullSize,
   getSizeByState,
   getTipNodeStatus,
   offsetTuple2Obj,
   sizeTuple2Obj,
 } from './common';
-import { DEFAULT_FULL_LIMIT_BOUND, DEFAULT_PROPS, NO_LIMIT_AREA } from './consts';
+import { DEFAULT_FULL_LIMIT_BOUND, NO_LIMIT_AREA } from './consts';
 import { updateZIndexEvent } from './event';
 
 export function useMethods(context: WineContext) {
-  const {
-    state,
-    setState,
-    self,
-    wrapElRef,
-    headerElRef,
-    update,
-    insideState,
-    setInsideState,
-  } = context;
+  const { state, self, wrapElRef, headerElRef, update, insideState, setInsideState } = context;
 
   /** 更新窗口、bound、warp等信息 (不触发render), 在窗口位置、尺寸等变更完毕后应该调用此方法 */
   function refreshDeps() {
@@ -42,16 +34,7 @@ export function useMethods(context: WineContext) {
     self.headerSize = [headerW, headerH];
     self.availableSize = [winW - w, winH - h];
     self.winSize = [winW, winH];
-    self.fullSize = [winW, winH];
-
-    if (state.limitBound) {
-      const flb = { ...DEFAULT_FULL_LIMIT_BOUND, ...state.limitBound };
-
-      const fW = winW - flb.left - flb.right;
-      const fH = winH - flb.top - flb.bottom;
-
-      self.fullSize = [fW, fH];
-    }
+    self.fullSize = getFullSize(state);
 
     setBound();
   }
@@ -93,6 +76,12 @@ export function useMethods(context: WineContext) {
     self.x = Math.floor(_clamp(x, self.bound.left, self.bound.right));
     self.y = Math.floor(_clamp(y, self.bound.top, self.bound.bottom));
 
+    if (insideState.isFull) {
+      setInsideState({
+        isFull: false,
+      });
+    }
+
     return update({
       x: self.x,
       y: self.y,
@@ -104,29 +93,24 @@ export function useMethods(context: WineContext) {
 
   /** 根据当前窗口信息和alignment设置窗口位置, 如果包含缓存的窗口信息则使用缓存信息 */
   function resize() {
-    let x = self.memoX;
-    let y = self.memoY;
+    let [x, y] = self.memoXY || [];
     let [width, height] = self.memoWrapSize || [];
 
-    if (!isNumber(x) || !isNumber(y)) {
-      const size = calcAlignment(
-        state.alignment,
-        self.availableSize,
-        {
-          ...DEFAULT_FULL_LIMIT_BOUND,
-          ...state.limitBound,
-        },
-        self,
-      );
+    const flb = { ...DEFAULT_FULL_LIMIT_BOUND, ...state.limitBound };
 
-      x = size[0];
-      y = size[1];
-    }
-
+    // 没有历史尺寸
     if (!isNumber(width) || !isNumber(height)) {
       const [w, h] = getSizeByState(state);
       width = w;
       height = h;
+    }
+
+    // 没有历史位置
+    if (!isNumber(x) || !isNumber(y)) {
+      const pos = calcAlignment(state.alignment, flb, self);
+
+      x = pos[0];
+      y = pos[1];
     }
 
     /** 防止当前限制影响定位 */
@@ -137,10 +121,6 @@ export function useMethods(context: WineContext) {
       height,
     }).then(() => {
       refreshDeps();
-      insideState.isFull &&
-        setInsideState({
-          isFull: false,
-        });
     });
   }
 
@@ -170,10 +150,11 @@ export function useMethods(context: WineContext) {
 
   function top() {
     updateZIndexEvent.emit();
-    if (state.zIndex <= DEFAULT_PROPS.zIndex) {
-      setState({
-        zIndex: DEFAULT_PROPS.zIndex + 1,
+    if (!insideState.isTop) {
+      setInsideState({
+        isTop: true,
       });
+      state.onActive?.();
     }
   }
 
@@ -184,8 +165,7 @@ export function useMethods(context: WineContext) {
     self.memoWrapSize = self.wrapSize;
 
     /** 根据fullLimitBound进行修正，防止默认最大化切换为最小化时窗口跳到最左上角 */
-    self.memoX = Math.max(self.x, flb.left);
-    self.memoY = Math.max(self.y, flb.top);
+    self.memoXY = [Math.max(self.x, flb.left), Math.max(self.y, flb.top)];
   }
 
   /** 根据光标位置和warp位置来计算光标在wrap上所处位置 */
@@ -207,7 +187,7 @@ export function useMethods(context: WineContext) {
         hideTipNode();
 
         if (tipNodeStatus) {
-          const size = tipNodeStatus.size;
+          const size = tipNodeStatus;
           setXY(size.left, size.top, {
             width: size.width,
             height: size.height,
@@ -220,7 +200,7 @@ export function useMethods(context: WineContext) {
       if (tipNodeStatus) {
         showTipNode();
 
-        Object.entries(tipNodeStatus.size).forEach(([key, val]) => {
+        Object.entries(tipNodeStatus).forEach(([key, val]) => {
           if (self.tipNode) {
             const oldVal = self.tipNode.style[key as any];
             const valStr = `${val}px`;
@@ -259,7 +239,6 @@ export function useMethods(context: WineContext) {
     refreshDeps,
     setXY,
     resize,
-    memoWinState,
     full,
     getCursorWrapOffset,
     top,

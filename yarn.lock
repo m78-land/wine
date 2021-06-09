@@ -1247,6 +1247,19 @@
     resize-observer-polyfill "^1.5.1"
     tslib "^1.11.1"
 
+"@lxjx/hooks@^1.17.0":
+  version "1.17.0"
+  resolved "https://registry.npmjs.org/@lxjx/hooks/-/hooks-1.17.0.tgz#5dafb5a03d6419b58abf6d44912bd374c9dac841"
+  integrity sha512-OzxNJc9PzzQTp6UWVx0hkcaeofHaF5iCY1TJ3PsxufdqKOLunJtySHteK9axymSgFS3xE6FlTCGhHmKuuWclIg==
+  dependencies:
+    "@lxjx/utils" "^1.11.0"
+    lodash "^4.17.15"
+    query-string "^6.12.0"
+    react-spring "^9.0.0-rc.3"
+    react-use "^14.0.0"
+    resize-observer-polyfill "^1.5.1"
+    tslib "^1.11.1"
+
 "@lxjx/preset-config@^0.1.0":
   version "0.1.0"
   resolved "https://registry.npm.taobao.org/@lxjx/preset-config/download/@lxjx/preset-config-0.1.0.tgz#f61a8edb37bb7d40628fda3fc8a545e1f129976f"
@@ -1263,6 +1276,15 @@
     "@babel/runtime" "^7.7.6"
     "@types/node" "^13.11.0"
     uuid "^7.0.2"
+
+"@lxjx/utils@^1.14.0":
+  version "1.14.0"
+  resolved "https://registry.npmjs.org/@lxjx/utils/-/utils-1.14.0.tgz#2f9c68017e19591f47a6b18a2659c830e68bf100"
+  integrity sha512-IqlaXzCyWSld7KdB3MmKCio1BDMDEQvb7VHc9lSHWw+uSXNABbNoWhNBjGLCnZUBLwDMbowE7+gNlYlSfQqP0A==
+  dependencies:
+    "@babel/runtime" "^7.7.6"
+    "@types/node" "^13.11.0"
+    "@types/react" "^17.0.9"
 
 "@m78/render-api@^1.0.5":
   version "1.0.5"
@@ -1806,6 +1828,15 @@
   version "16.14.5"
   resolved "https://registry.npm.taobao.org/@types/react/download/@types/react-16.14.5.tgz?cache=0&sync_timestamp=1615114060788&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Freact%2Fdownload%2F%40types%2Freact-16.14.5.tgz#2c39b5cadefaf4829818f9219e5e093325979f4d"
   integrity sha1-LDm1yt769IKYGPkhnl4JMyWXn00=
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^17.0.9":
+  version "17.0.10"
+  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.10.tgz#c8bb4e37cc642f7cc5532959cb5e2ead6c74dec9"
+  integrity sha512-+Tc5aGO49L/cjFBfpIPB398ztmAUChglc+a+EYlvphMOMvwUEzmLiyfmnEseGE7inMO6XiSffHmXVPC8GonksQ==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"

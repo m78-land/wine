@@ -4,12 +4,12 @@ import { useDrag } from 'react-use-gesture';
 import { WineContext, WineDragPositionEnum } from './types';
 import { _Methods } from './useMethods';
 import { useDragResize } from './useDragResize';
-import { DEFAULT_PROPS, OPEN_FALSE_ANIMATION, OPEN_TRUE_ANIMATION } from './consts';
+import { OPEN_FALSE_ANIMATION, OPEN_TRUE_ANIMATION } from './consts';
 import { updateZIndexEvent } from './event';
 import { getTipNode } from './common';
 
 export function useLifeCycle(ctx: WineContext, methods: _Methods) {
-  const { update, state, setState, headerElRef, self, setInsideState } = ctx;
+  const { update, state, headerElRef, self, setInsideState, insideState } = ctx;
   const { refreshDeps, resize, setXY, full } = methods;
 
   // 标记销毁
@@ -41,7 +41,7 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
 
       defer(() => {
         setInsideState({
-          headerHeight: self.headerSize[1] + 4 /* 预设间隔 见.m78-wine_content */,
+          headerHeight: self.headerSize[1],
         });
       });
     });
@@ -84,16 +84,18 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
 
   // 监听置顶还原
   updateZIndexEvent.useEvent(() => {
-    if (state.zIndex > DEFAULT_PROPS.zIndex) {
-      setState({
-        zIndex: DEFAULT_PROPS.zIndex,
+    if (insideState.isTop) {
+      setInsideState({
+        isTop: false,
       });
     }
   });
 
   useDrag(
-    ({ memo = [], xy, down, delta: [dX, dY], event }) => {
+    ({ memo = [], xy, down, delta: [dX, dY], event, tap }) => {
       event.preventDefault();
+
+      if (tap) return;
 
       /*
        * cursorOffset记录事件开始时相对wrap左上角的位置

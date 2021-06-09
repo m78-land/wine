@@ -1,23 +1,10 @@
-import { AnyFunction } from '@lxjx/utils';
+import { AnyFunction, TupleNumber, Bound, BoundSize } from '@lxjx/utils';
 import React from 'react';
-import {
-  BoundMeta,
-  BoundSizeMeta,
-  TupleNumber,
-  WineContext,
-  _TipNodeStatusItem,
-  _WineSelf,
-} from './types';
+import { WineContext, _WineSelf } from './types';
 import { DEFAULT_FULL_LIMIT_BOUND, TIP_NODE_KEY } from './consts';
 
 /** 根据alignment值获取x, y值 */
-export function calcAlignment(
-  alignment: TupleNumber,
-  availableSize: TupleNumber,
-  limit: BoundMeta,
-  self: _WineSelf,
-) {
-  // 实际可用的空间 * 定位位置比 + 左上的limit偏移
+export function calcAlignment(alignment: TupleNumber, limit: Bound, self: _WineSelf) {
   const [aW, aH] = self.availableSize;
   const w = aW - limit.left - limit.right;
   const h = aH - limit.top - limit.bottom;
@@ -46,18 +33,26 @@ export function offsetTuple2Obj(offsetT: TupleNumber) {
   };
 }
 
-/** 根据状态获取当前尺寸 */
+/** 根据state状态获取当前尺寸 */
 export function getSizeByState(state: WineContext['state']) {
   let w;
   let h;
 
+  const [fW, fH] = getFullSize(state);
+
   if (state.width) w = state.width;
   if (state.height) h = state.height;
 
-  if (!h) h = state.sizeRatio * window.innerHeight;
-  if (!w) w = h * 1.3;
+  // 横纵屏与不同的方式作用sizeRatio, 横屏以高度为基准，竖屏一宽度为基准
+  if (fW > fH) {
+    if (!h) h = state.sizeRatio * fH;
+    if (!w) w = h * 1.3;
+  } else {
+    if (!w) w = state.sizeRatio * fW;
+    if (!h) h = w / 1.3;
+  }
 
-  return [Math.floor(w), Math.floor(h)] as TupleNumber;
+  return [Math.min(Math.floor(w), fW), Math.min(Math.floor(h), fH)] as TupleNumber;
 }
 
 /** 创建一个空的dom节点 */
@@ -79,7 +74,7 @@ export function getTipNode() {
 }
 
 /** 检测指定的xy点是否在 */
-export function checkPointerInBound([x, y]: TupleNumber, bound: BoundSizeMeta) {
+export function checkPointerInBound([x, y]: TupleNumber, bound: BoundSize) {
   return (
     x >= bound.left &&
     x <= bound.left + bound.width &&
@@ -94,7 +89,7 @@ export function sizeBoundHelper(
   top: number,
   width: number,
   height: number,
-): BoundSizeMeta {
+): BoundSize {
   return {
     top,
     left,
@@ -107,120 +102,62 @@ export function sizeBoundHelper(
 export function getTipNodeStatus(
   [fW, fH]: TupleNumber,
   xy: TupleNumber,
-  limitBound?: Partial<BoundMeta>,
-): _TipNodeStatusItem | undefined {
+  limitBound?: Partial<Bound>,
+): BoundSize | undefined {
   const flb = { ...DEFAULT_FULL_LIMIT_BOUND, ...limitBound };
 
-  /** 基础偏移 */
-  const offset = 6;
-  /* 区块厚度 */
-  const size = 50;
-  /* 两侧区块占用的宽度 */
-  const sideWidth = fW * 0.2;
-  /* 两侧区块占用的高度 */
-  const sideHeight = fH * 0.2;
-  /* 中间区块占用的高度 */
-  const centerHeight = fH * 0.6;
-  /* 中间区块的宽度 */
-  const centerWidth = fW * 0.6;
   /* 全屏高度的一半 */
   const fHHalf = fH / 2;
   /* 全屏宽度的一半 */
   const fWHalf = fW / 2;
 
-  /* TODO: 下方的一些计算可以抽取为通用变量来提升一点点性能 */
+  const [x, y] = xy;
 
-  const tBound = sizeBoundHelper(sideWidth + size + flb.left, offset + flb.top, centerWidth, size);
+  /* 以下4变量偏移1px是为了防止全屏时光标无法移动到边缘外，所以主动减少区域 */
 
-  if (checkPointerInBound(xy, tBound)) {
-    return {
-      bound: tBound,
-      size: sizeBoundHelper(flb.left, flb.top, fW, fHHalf),
-    };
-  }
+  // 可用区域右侧
+  const avaRight = flb.left + fW - 1;
 
-  const rBound = sizeBoundHelper(
-    fW - size - offset + flb.left,
-    sideHeight + offset + flb.top,
-    size,
-    centerHeight,
-  );
+  // 可用区域底部
+  const avaBottom = flb.top + fH - 1;
 
-  if (checkPointerInBound(xy, rBound)) {
-    return {
-      bound: rBound,
-      size: sizeBoundHelper(fWHalf + flb.left, flb.top, fWHalf, fH),
-    };
-  }
+  /** 光标是否在水平方向的中部 */
+  const cursorInHorizontalCenter = x > flb.left + 1 && x < avaRight;
 
-  const bBound = sizeBoundHelper(
-    sideWidth + offset + flb.left,
-    fH - size - offset + flb.top,
-    centerWidth,
-    size,
-  );
+  /** 光标是否在垂直方向的中部 */
+  const cursorInVerticalCenter = y > flb.top + 1 && y < avaBottom;
 
-  if (checkPointerInBound(xy, bBound)) {
-    return {
-      bound: bBound,
-      size: sizeBoundHelper(flb.left, fHHalf + flb.top, fW, fHHalf),
-    };
-  }
+  const inTop = y <= flb.top && cursorInHorizontalCenter;
 
-  const lBound = sizeBoundHelper(
-    offset + flb.left,
-    sideHeight + offset + flb.top,
-    size,
-    centerHeight,
-  );
+  if (inTop) return sizeBoundHelper(flb.left, flb.top, fW, fHHalf);
 
-  if (checkPointerInBound(xy, lBound)) {
-    return {
-      bound: bBound,
-      size: sizeBoundHelper(flb.left, flb.top, fWHalf, fH),
-    };
-  }
+  const inRight = x >= avaRight && cursorInVerticalCenter;
 
-  const ltBound = sizeBoundHelper(offset + flb.left, offset + flb.top, size, size);
+  if (inRight) return sizeBoundHelper(fWHalf + flb.left, flb.top, fWHalf, fH);
 
-  if (checkPointerInBound(xy, ltBound)) {
-    return {
-      bound: ltBound,
-      size: sizeBoundHelper(flb.left, flb.top, fWHalf, fHHalf),
-    };
-  }
+  const inBottom = y >= avaBottom && cursorInHorizontalCenter;
 
-  const lbBound = sizeBoundHelper(offset + flb.left, fH - offset - size + flb.top, size, size);
+  if (inBottom) return sizeBoundHelper(flb.left, fHHalf + flb.top, fW, fHHalf);
 
-  if (checkPointerInBound(xy, lbBound)) {
-    return {
-      bound: lbBound,
-      size: sizeBoundHelper(flb.left, fHHalf + flb.top, fWHalf, fHHalf),
-    };
-  }
+  const inLeft = x <= flb.left && cursorInVerticalCenter;
 
-  const rtBound = sizeBoundHelper(fW - offset - size + flb.left, offset + flb.top, size, size);
+  if (inLeft) return sizeBoundHelper(flb.left, flb.top, fWHalf, fH);
 
-  if (checkPointerInBound(xy, rtBound)) {
-    return {
-      bound: rtBound,
-      size: sizeBoundHelper(fWHalf + flb.left, flb.top, fWHalf, fHHalf),
-    };
-  }
+  const inLT = x <= flb.left && y <= flb.top;
 
-  const rbBound = sizeBoundHelper(
-    fW - offset - size + flb.left,
-    fH - offset - size + flb.top,
-    size,
-    size,
-  );
+  if (inLT) return sizeBoundHelper(flb.left, flb.top, fWHalf, fHHalf);
 
-  if (checkPointerInBound(xy, rbBound)) {
-    return {
-      bound: rbBound,
-      size: sizeBoundHelper(fWHalf + flb.left, fHHalf + flb.top, fWHalf, fHHalf),
-    };
-  }
+  const inLB = x <= flb.left && y >= avaBottom;
+
+  if (inLB) return sizeBoundHelper(flb.left, fHHalf + flb.top, fWHalf, fHHalf);
+
+  const inRT = x >= avaRight && y <= flb.top;
+
+  if (inRT) return sizeBoundHelper(fWHalf + flb.left, flb.top, fWHalf, fHHalf);
+
+  const inRB = x >= avaRight && y >= avaBottom;
+
+  if (inRB) return sizeBoundHelper(fWHalf + flb.left, fHHalf + flb.top, fWHalf, fHHalf);
 }
 
 /**
@@ -239,4 +176,20 @@ export function keypressAndClick(handle: AnyFunction, spaceTrigger = true) {
       }
     },
   };
+}
+
+/** 根据state获取fullSize */
+export function getFullSize(_state: WineContext['state']) {
+  let fullSize = [window.innerWidth, window.innerHeight];
+
+  if (_state.limitBound) {
+    const flb = { ...DEFAULT_FULL_LIMIT_BOUND, ..._state.limitBound };
+
+    const fW = fullSize[0] - flb.left - flb.right;
+    const fH = fullSize[1] - flb.top - flb.bottom;
+
+    fullSize = [fW, fH];
+  }
+
+  return fullSize as TupleNumber;
 }
