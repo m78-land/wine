@@ -72,16 +72,16 @@ export function getTipNode() {
 
   return div;
 }
-
-/** 检测指定的xy点是否在 */
-export function checkPointerInBound([x, y]: TupleNumber, bound: BoundSize) {
-  return (
-    x >= bound.left &&
-    x <= bound.left + bound.width &&
-    y >= bound.top &&
-    y <= bound.top + bound.height
-  );
-}
+//
+// /** 检测指定的xy点是否在 */
+// export function checkPointerInBound([x, y]: TupleNumber, bound: BoundSize) {
+//   return (
+//     x >= bound.left &&
+//     x <= bound.left + bound.width &&
+//     y >= bound.top &&
+//     y <= bound.top + bound.height
+//   );
+// }
 
 /** 便捷获取尺寸对象 */
 export function sizeBoundHelper(
