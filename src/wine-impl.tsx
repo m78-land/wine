@@ -20,10 +20,10 @@ import { getSizeByState } from './common';
 
 import './style.css';
 
-type trimDefaultState = WineProps['state'] & typeof DEFAULT_PROPS;
+type trimDefaultState = WineProps & typeof DEFAULT_PROPS;
 
 const WineImpl = (props: WineProps) => {
-  const { state, instance } = props;
+  const { instance } = props;
 
   const [insideState, setInsideState] = useSetState<_WineInsideState>(() => ({
     isFull: false,
@@ -35,7 +35,7 @@ const WineImpl = (props: WineProps) => {
   const headerElRef = useRef<HTMLDivElement>(null!);
 
   const [spProps, update] = useSpring<WineAnimateProps>(() => {
-    const [width, height] = getSizeByState(state as trimDefaultState);
+    const [width, height] = getSizeByState(props as trimDefaultState);
     return {
       opacity: 0,
       x: 0,
@@ -63,7 +63,7 @@ const WineImpl = (props: WineProps) => {
   const ctx: WineContext = {
     wrapElRef,
     headerElRef,
-    state: state as trimDefaultState,
+    state: props as trimDefaultState,
     setState: instance.setState,
     setInsideState,
     insideState,

@@ -54,7 +54,7 @@ const Play = () => {
           border: '1px solid red',
         }}
       />
-      <Wine.RenderBoxTarget />
+      {/* <Wine.RenderBoxTarget /> */}
       <button onClick={renderHandle}>render window</button>
     </div>
   );

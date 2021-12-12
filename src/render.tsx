@@ -6,7 +6,7 @@ import { _Methods } from './useMethods';
 import { keypressAndClick } from './common';
 
 /** 渲染内置顶栏 */
-const renderBuiltInHeader: NonNullable<WineProps['state']['headerCustomer']> = (
+const renderBuiltInHeader: NonNullable<WineProps['headerCustomer']> = (
   props,
   instance,
   isFull,

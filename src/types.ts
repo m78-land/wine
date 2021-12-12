@@ -57,7 +57,7 @@ export interface WineContext {
   dragLineRBRef: MutableRefObject<HTMLDivElement>;
   dragLineLBRef: MutableRefObject<HTMLDivElement>;
 
-  state: WineProps['state'] & typeof DEFAULT_PROPS;
+  state: WineProps & typeof DEFAULT_PROPS;
   setState: WineProps['instance']['setState'];
   insideState: _WineInsideState;
   setInsideState: SetState<_WineInsideState>;
@@ -131,7 +131,10 @@ export interface WineState {
   onActive?: () => void;
 }
 
-export interface WineProps extends RenderApiComponentBaseProps<WineState> {}
+export interface WineProps extends RenderApiComponentBaseProps<WineState> {
+  /** 是否开启 */
+  open?: boolean;
+}
 
 /** wine内部状态 */
 export interface _WineInsideState {
@@ -163,7 +166,7 @@ export interface WineInstanceExtend {
 
 /** wine实例 */
 export interface WineInstance
-  extends RenderApiComponentInstance<WineProps['state'], WineInstanceExtend> {}
+  extends RenderApiComponentInstance<WineProps, WineInstanceExtend> {}
 
 /*
  * 其他可能有需要的配置
