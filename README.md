@@ -7,6 +7,10 @@
 
 <br>
 
+[link to doc](http://llixianjie.gitee.io/m78/docs/utils/wine)
+
+<br>
+
 `Wine` 用于在浏览器端便捷的实现多窗口
 `Wine` is used to implement multiple windows conveniently on browser side
 
@@ -20,9 +24,3 @@
 * 定制样式      custom style
 * 限制拖动     bounded 
 * 等...       etc.   
-
-<br />
-
-🔥 一些用例 | cases
-
-敬请期待... | coming soon...
