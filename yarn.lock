@@ -1285,10 +1285,10 @@
     lodash "^4.17.21"
     tslib "^2.1.0"
 
-"@m78/render-api@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/@m78/render-api/-/render-api-1.1.0.tgz#d6973b0dc2594faad88d6b4d8e1b73a74ac6e31f"
-  integrity sha512-mm+MoNNcej+KYJA5qSOgjxfeXCJMO56THDrWouNzHEIYmcZ4RdFyH4z8WpScXi1AA3SVH/Qr/hrxGScM6odHHg==
+"@m78/render-api@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/@m78/render-api/-/render-api-1.1.1.tgz#3588946279250ae50c15688ea57095e604d11ade"
+  integrity sha512-Ek+hYx3sG6NRz3+9bGFERLTxuTsar24uq9jNN7IkvC9rp0A2kMlaHW7F6c9h2h/GuUlJjjTxVTUhcf+CLiHlBA==
   dependencies:
     "@lxjx/hooks" "^1.16.4"
     "@lxjx/utils" "^1.11.1"

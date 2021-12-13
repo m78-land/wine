@@ -27,19 +27,11 @@ const Play = () => {
   }, []);
 
   function renderHandle() {
-    const t = Wine.render({
-      content: <Test />,
-      // sizeRatio: 0.5,
-      alignment: [0.5, 0.5],
-      limitBound: {
-        left: 200,
-        top: 200,
-        right: 100,
-        bottom: 100,
-      },
+    const task = Wine.render({
+      content: <Test />
     });
 
-    console.log(t);
+    console.log(task);
   }
 
   return (
