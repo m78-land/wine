@@ -28,7 +28,7 @@ const Play = () => {
 
   function renderHandle() {
     const task = Wine.render({
-      content: <Test />
+      content: <Test />,
     });
 
     console.log(task);
