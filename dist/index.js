@@ -1,6 +1,6 @@
 import create from '@m78/render-api';
 import { __assign } from 'tslib';
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useImperativeHandle } from 'react';
 import { createEvent, useFn, useSetState, useSelf } from '@lxjx/hooks';
 import { animated, useSpring, config } from 'react-spring';
 import { isNumber, defer, createRandString } from '@lxjx/utils';
@@ -31,17 +31,6 @@ var WineDragPositionEnum;
     WineDragPositionEnum[WineDragPositionEnum["RB"] = 6] = "RB";
     WineDragPositionEnum[WineDragPositionEnum["LB"] = 7] = "LB";
 })(WineDragPositionEnum || (WineDragPositionEnum = {}));
-/*
- * 其他可能有需要的配置
- * drag? boolean
- * resize?: boolean
- * animationType?: any;
- * onOpenChange?: (open: boolean) => void;
- * onResize?: (e: any) => void;
- * onDispose?: (e: any) => void;
- * 窗口的唯一id，可用于记录窗口状态(大小位置等)到session中并在下次开启时设置
- * id?: string;
- * */
 
 /** 无bound限制 */
 var NO_LIMIT_AREA = { left: -Infinity, right: Infinity, top: -Infinity, bottom: Infinity };
@@ -196,7 +185,7 @@ function getTipNodeStatus(_a, xy, limitBound) {
         return sizeBoundHelper(fWHalf + flb.left, fHHalf + flb.top, fWHalf, fHHalf);
 }
 /**
- * 便捷的按键和点击时间绑定  TODO: 提到utils
+ * 便捷的按键和点击事件绑定  TODO: 提到utils
  * @param handle - 时间处理函数
  * @param spaceTrigger - 按下空格时是否触发
  * */
@@ -228,7 +217,7 @@ function getFullSize(_state) {
 var updateZIndexEvent = createEvent();
 
 function useMethods(context) {
-    var state = context.state, self = context.self, wrapElRef = context.wrapElRef, headerElRef = context.headerElRef, update = context.update, insideState = context.insideState, setInsideState = context.setInsideState;
+    var state = context.state, self = context.self, wrapElRef = context.wrapElRef, headerElRef = context.headerElRef, insideState = context.insideState, setInsideState = context.setInsideState, spApi = context.spApi;
     /** 更新窗口、bound、warp等信息 (不触发render), 在窗口位置、尺寸等变更完毕后应该调用此方法 */
     function refreshDeps() {
         if (self.unmounted)
@@ -281,7 +270,9 @@ function useMethods(context) {
                 isFull: false,
             });
         }
-        return update(__assign({ x: self.x, y: self.y, immediate: true, default: true }, extra));
+        var res = spApi.start(__assign({ x: self.x, y: self.y, immediate: true, default: true }, extra));
+        // TODO: 是否有效
+        return Promise.all(res);
     }
     /** 根据当前窗口信息和alignment设置窗口位置, 如果包含缓存的窗口信息则使用缓存信息 */
     function resize() {
@@ -414,7 +405,7 @@ function useMethods(context) {
 
 function useDragResize(type, ctx, methods) {
     var ref = useRef(null);
-    var wrapElRef = ctx.wrapElRef, self = ctx.self, update = ctx.update, insideState = ctx.insideState, setInsideState = ctx.setInsideState;
+    var wrapElRef = ctx.wrapElRef, self = ctx.self, spApi = ctx.spApi, insideState = ctx.insideState, setInsideState = ctx.setInsideState;
     useDrag(function (_a) {
         var _b = _a.xy, x = _b[0], y = _b[1];
         var wrapBound = wrapElRef.current.getBoundingClientRect();
@@ -454,7 +445,7 @@ function useDragResize(type, ctx, methods) {
             self.x = aniObj.x;
         if (isNumber(aniObj.y))
             self.y = aniObj.y;
-        update(aniObj).then(function () {
+        Promise.all(spApi(aniObj)).then(function () {
             methods.refreshDeps();
             if (insideState.isFull)
                 setInsideState({ isFull: false });
@@ -500,7 +491,7 @@ function useDragResize(type, ctx, methods) {
 }
 
 function useLifeCycle(ctx, methods) {
-    var update = ctx.update, state = ctx.state, headerElRef = ctx.headerElRef, self = ctx.self, setInsideState = ctx.setInsideState, insideState = ctx.insideState;
+    var spApi = ctx.spApi, state = ctx.state, headerElRef = ctx.headerElRef, self = ctx.self, setInsideState = ctx.setInsideState, insideState = ctx.insideState;
     var refreshDeps = methods.refreshDeps, resize = methods.resize, setXY = methods.setXY, full = methods.full;
     // 标记销毁
     useEffect(function () { return function () {
@@ -510,13 +501,13 @@ function useLifeCycle(ctx, methods) {
     useEffect(function () {
         self.tipNode = getTipNode();
         // none状态下会影响尺寸计算
-        update({
+        Promise.all(spApi.start({
             immediate: true,
             display: 'block',
-        }).then(function () {
+        })).then(function () {
             refreshDeps();
             // 防止窗口未设置偏移时抖动
-            update({
+            spApi.start({
                 visibility: 'visible',
                 immediate: true,
             });
@@ -536,20 +527,20 @@ function useLifeCycle(ctx, methods) {
     // 控制开关显示
     useEffect(function () {
         var ignore = false;
-        if (state.open) {
-            update({
+        if (state.show) {
+            spApi.start({
                 immediate: true,
                 display: 'block',
             });
-            update(OPEN_TRUE_ANIMATION);
+            spApi.start(OPEN_TRUE_ANIMATION);
             // 置顶
             methods.top();
         }
         else {
-            update(OPEN_FALSE_ANIMATION).then(function () {
+            Promise.all(spApi.start(OPEN_FALSE_ANIMATION)).then(function () {
                 if (ignore)
                     return;
-                update({
+                spApi.start({
                     immediate: true,
                     display: 'none',
                 });
@@ -558,7 +549,7 @@ function useLifeCycle(ctx, methods) {
         return function () {
             ignore = true;
         };
-    }, [state.open]);
+    }, [state.show]);
     // 监听置顶还原
     updateZIndexEvent.useEvent(function () {
         if (insideState.isTop) {
@@ -601,17 +592,17 @@ function useLifeCycle(ctx, methods) {
 }
 
 /** 渲染内置顶栏 */
-var renderBuiltInHeader = function (props, instance, isFull) {
+var renderBuiltInHeader = function (props, state, instance, isFull) {
     return (React.createElement("div", __assign({ className: "m78-wine_header" }, props),
-        React.createElement("div", { className: "m78-wine_header-content" }, instance.state.headerNode),
+        React.createElement("div", { className: "m78-wine_header-content" }, state.header),
         React.createElement("div", { className: "m78-wine_header-actions", onMouseDown: function (e) { return e.stopPropagation(); } },
-            React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(instance.hide)),
+            React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(function () { return state.onChange(false); })),
                 React.createElement("span", { className: "m78-wine_hide-btn" })),
-            isFull && (React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(instance.current.resize)),
+            isFull && (React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(instance.resize)),
                 React.createElement("span", { className: "m78-wine_resize-btn" }))),
-            !isFull && (React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(instance.current.full)),
+            !isFull && (React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(instance.full)),
                 React.createElement("span", { className: "m78-wine_max-btn" }))),
-            React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn __warning" }, keypressAndClick(instance.dispose)),
+            React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn __warning" }, keypressAndClick(state.onDispose)),
                 React.createElement("span", { className: "m78-wine_dispose-btn" })))));
 };
 /** 渲染主内容 */
@@ -627,7 +618,7 @@ function render(ctx, methods, instance) {
             headerCustomer({
                 ref: ctx.headerElRef,
                 onDoubleClick: function () { return (insideState.isFull ? resize() : full()); },
-            }, instance, insideState.isFull),
+            }, state, instance, insideState.isFull),
             React.createElement("div", { className: "m78-wine_content m78-wine_scrollbar", style: {
                     top: insideState.headerHeight,
                 } },
@@ -643,7 +634,6 @@ function render(ctx, methods, instance) {
 }
 
 var WineImpl = function (props) {
-    var instance = props.instance;
     var _a = useSetState(function () { return ({
         isFull: false,
         headerHeight: undefined,
@@ -663,7 +653,7 @@ var WineImpl = function (props) {
             display: 'none',
             visibility: 'hidden',
         };
-    }), spProps = _b[0], update = _b[1];
+    }), spProps = _b[0], spApi = _b[1];
     var self = useSelf({
         x: 0,
         y: 0,
@@ -679,12 +669,11 @@ var WineImpl = function (props) {
         wrapElRef: wrapElRef,
         headerElRef: headerElRef,
         state: props,
-        setState: instance.setState,
         setInsideState: setInsideState,
         insideState: insideState,
         self: self,
         spProps: spProps,
-        update: update,
+        spApi: spApi,
         dragLineRRef: null,
         dragLineLRef: null,
         dragLineBRef: null,
@@ -697,7 +686,7 @@ var WineImpl = function (props) {
     var methods = useMethods(ctx);
     useLifeCycle(ctx, methods);
     var ins = useMemo(function () {
-        instance.current = {
+        var instance = {
             el: wrapElRef,
             top: methods.top,
             full: methods.full,
@@ -711,6 +700,7 @@ var WineImpl = function (props) {
         };
         return instance;
     }, []);
+    useImperativeHandle(props.instanceRef, function () { return ins; }, []);
     return render(ctx, methods, ins);
 };
 

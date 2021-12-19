@@ -1,15 +1,14 @@
-import { useMemo, useRef } from 'react';
+import { useImperativeHandle, useMemo, useRef } from 'react';
 import { useSelf, useSetState } from '@lxjx/hooks';
 import { config, useSpring } from 'react-spring';
 import { createRandString } from '@lxjx/utils';
 import {
   _WineSelf,
-  WineAnimateProps,
-  WineContext,
+  _WineAnimateProps,
+  _WineContext,
   _WineInsideState,
+  WineState,
   WineInstance,
-  WineProps,
-  WineInstanceExtend,
 } from './types';
 
 import { DEFAULT_PROPS, NO_LIMIT_AREA } from './consts';
@@ -20,11 +19,9 @@ import { getSizeByState } from './common';
 
 import './style.css';
 
-type trimDefaultState = WineProps & typeof DEFAULT_PROPS;
+type TrimDefaultState = WineState & typeof DEFAULT_PROPS;
 
-const WineImpl = (props: WineProps) => {
-  const { instance } = props;
-
+const WineImpl = (props: WineState) => {
   const [insideState, setInsideState] = useSetState<_WineInsideState>(() => ({
     isFull: false,
     headerHeight: undefined,
@@ -34,8 +31,8 @@ const WineImpl = (props: WineProps) => {
   const wrapElRef = useRef<HTMLDivElement>(null!);
   const headerElRef = useRef<HTMLDivElement>(null!);
 
-  const [spProps, update] = useSpring<WineAnimateProps>(() => {
-    const [width, height] = getSizeByState(props as trimDefaultState);
+  const [spProps, spApi] = useSpring<_WineAnimateProps>(() => {
+    const [width, height] = getSizeByState(props as TrimDefaultState);
     return {
       opacity: 0,
       x: 0,
@@ -60,16 +57,15 @@ const WineImpl = (props: WineProps) => {
     windowBound: NO_LIMIT_AREA,
   });
 
-  const ctx: WineContext = {
+  const ctx: _WineContext = {
     wrapElRef,
     headerElRef,
-    state: props as trimDefaultState,
-    setState: instance.setState,
+    state: props as TrimDefaultState,
     setInsideState,
     insideState,
     self,
     spProps,
-    update: update as any,
+    spApi,
     dragLineRRef: null as any,
     dragLineLRef: null as any,
     dragLineBRef: null as any,
@@ -85,7 +81,7 @@ const WineImpl = (props: WineProps) => {
   useLifeCycle(ctx, methods);
 
   const ins = useMemo(() => {
-    (instance.current as any) = {
+    const instance: WineInstance = {
       el: wrapElRef,
       top: methods.top,
       full: methods.full,
@@ -96,9 +92,11 @@ const WineImpl = (props: WineProps) => {
         });
       },
       meta: self,
-    } as WineInstanceExtend;
-    return instance as WineInstance;
+    };
+    return instance;
   }, []);
+
+  useImperativeHandle(props.instanceRef, () => ins, []);
 
   return render(ctx, methods, ins);
 };

@@ -2,7 +2,7 @@ import _clamp from 'lodash/clamp';
 import { useFn } from '@lxjx/hooks';
 import _throttle from 'lodash/throttle';
 import { isNumber, TupleNumber } from '@lxjx/utils';
-import { WineBoundEnum, WineContext } from './types';
+import { WineBoundEnum, _WineContext } from './types';
 import {
   calcAlignment,
   getFullSize,
@@ -14,8 +14,8 @@ import {
 import { DEFAULT_FULL_LIMIT_BOUND, NO_LIMIT_AREA } from './consts';
 import { updateZIndexEvent } from './event';
 
-export function useMethods(context: WineContext) {
-  const { state, self, wrapElRef, headerElRef, update, insideState, setInsideState } = context;
+export function useMethods(context: _WineContext) {
+  const { state, self, wrapElRef, headerElRef, insideState, setInsideState, spApi } = context;
 
   /** 更新窗口、bound、warp等信息 (不触发render), 在窗口位置、尺寸等变更完毕后应该调用此方法 */
   function refreshDeps() {
@@ -82,13 +82,16 @@ export function useMethods(context: WineContext) {
       });
     }
 
-    return update({
+    const res = spApi.start({
       x: self.x,
       y: self.y,
       immediate: true,
       default: true,
       ...extra,
     });
+
+    // TODO: 是否有效
+    return Promise.all(res);
   }
 
   /** 根据当前窗口信息和alignment设置窗口位置, 如果包含缓存的窗口信息则使用缓存信息 */

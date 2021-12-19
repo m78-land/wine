@@ -1,6 +1,6 @@
-import { WineInstanceExtend, WineState } from './types';
+import { WineInstance, WineState } from './types';
 import { keypressAndClick } from './common';
-declare const Wine: import("@m78/render-api").RenderApiInstance<WineState, WineInstanceExtend>;
+declare const Wine: import("@m78/render-api").RenderApiInstance<WineState, WineInstance>;
 export { keypressAndClick };
 export * from './types';
 export default Wine;

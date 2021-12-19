@@ -1,41 +1,42 @@
 import { animated } from 'react-spring';
 import React from 'react';
 import clsx from 'clsx';
-import { WineProps, WineContext, WineInstance } from './types';
+import { _WineContext, WineInstance, WineState } from './types';
 import { _Methods } from './useMethods';
 import { keypressAndClick } from './common';
 
 /** 渲染内置顶栏 */
-const renderBuiltInHeader: NonNullable<WineProps['headerCustomer']> = (
+const renderBuiltInHeader: NonNullable<WineState['headerCustomer']> = (
   props,
+  state,
   instance,
   isFull,
 ) => {
   return (
     <div className="m78-wine_header" {...props}>
-      <div className="m78-wine_header-content">{instance.state.headerNode}</div>
+      <div className="m78-wine_header-content">{state.header}</div>
       <div className="m78-wine_header-actions" onMouseDown={e => e.stopPropagation()}>
-        <span tabIndex={1} className="m78-wine_btn" {...keypressAndClick(instance.hide)}>
+        <span
+          tabIndex={1}
+          className="m78-wine_btn"
+          {...keypressAndClick(() => state.onChange(false))}
+        >
           <span className="m78-wine_hide-btn" />
         </span>
         {isFull && (
-          <span
-            tabIndex={1}
-            className="m78-wine_btn"
-            {...keypressAndClick(instance.current!.resize)}
-          >
+          <span tabIndex={1} className="m78-wine_btn" {...keypressAndClick(instance.resize)}>
             <span className="m78-wine_resize-btn" />
           </span>
         )}
         {!isFull && (
-          <span tabIndex={1} className="m78-wine_btn" {...keypressAndClick(instance.current!.full)}>
+          <span tabIndex={1} className="m78-wine_btn" {...keypressAndClick(instance.full)}>
             <span className="m78-wine_max-btn" />
           </span>
         )}
         <span
           tabIndex={1}
           className="m78-wine_btn __warning"
-          {...keypressAndClick(instance.dispose)}
+          {...keypressAndClick(state.onDispose)}
         >
           <span className="m78-wine_dispose-btn" />
         </span>
@@ -45,7 +46,7 @@ const renderBuiltInHeader: NonNullable<WineProps['headerCustomer']> = (
 };
 
 /** 渲染主内容 */
-export function render(ctx: WineContext, methods: _Methods, instance: WineInstance) {
+export function render(ctx: _WineContext, methods: _Methods, instance: WineInstance) {
   const { state, insideState } = ctx;
   const { resize, full, top } = methods;
 
@@ -73,6 +74,7 @@ export function render(ctx: WineContext, methods: _Methods, instance: WineInstan
             ref: ctx.headerElRef,
             onDoubleClick: () => (insideState.isFull ? resize() : full()),
           },
+          state,
           instance,
           insideState.isFull!,
         )}

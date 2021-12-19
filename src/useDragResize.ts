@@ -2,14 +2,14 @@ import { useDrag } from 'react-use-gesture';
 import _clamp from 'lodash/clamp';
 import { useRef } from 'react';
 import { isNumber, TupleNumber } from '@lxjx/utils';
-import { WineContext, WineDragPositionEnum } from './types';
+import { _WineContext, WineDragPositionEnum } from './types';
 import { _Methods } from './useMethods';
 import { sizeTuple2Obj } from './common';
 import { MIN_SIZE } from './consts';
 
-export function useDragResize(type: WineDragPositionEnum, ctx: WineContext, methods: _Methods) {
+export function useDragResize(type: WineDragPositionEnum, ctx: _WineContext, methods: _Methods) {
   const ref = useRef<HTMLDivElement>(null!);
-  const { wrapElRef, self, update, insideState, setInsideState } = ctx;
+  const { wrapElRef, self, spApi, insideState, setInsideState } = ctx;
 
   useDrag(
     ({ xy: [x, y] }) => {
@@ -59,7 +59,7 @@ export function useDragResize(type: WineDragPositionEnum, ctx: WineContext, meth
       if (isNumber(aniObj.x)) self.x = aniObj.x;
       if (isNumber(aniObj.y)) self.y = aniObj.y;
 
-      update(aniObj).then(() => {
+      Promise.all(spApi(aniObj)).then(() => {
         methods.refreshDeps();
         if (insideState.isFull) setInsideState({ isFull: false });
       });

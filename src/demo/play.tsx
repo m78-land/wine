@@ -29,6 +29,13 @@ const Play = () => {
   function renderHandle() {
     const task = Wine.render({
       content: <Test />,
+      alignment: [0.5, 0.5],
+      limitBound: {
+        left: 200,
+        top: 200,
+        right: 100,
+        bottom: 100,
+      },
     });
 
     console.log(task);

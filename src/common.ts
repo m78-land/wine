@@ -1,6 +1,6 @@
 import { AnyFunction, TupleNumber, Bound, BoundSize } from '@lxjx/utils';
 import React from 'react';
-import { WineContext, _WineSelf } from './types';
+import { _WineContext, _WineSelf } from './types';
 import { DEFAULT_FULL_LIMIT_BOUND, TIP_NODE_KEY } from './consts';
 
 /** 根据alignment值获取x, y值 */
@@ -34,7 +34,7 @@ export function offsetTuple2Obj(offsetT: TupleNumber) {
 }
 
 /** 根据state状态获取当前尺寸 */
-export function getSizeByState(state: WineContext['state']) {
+export function getSizeByState(state: _WineContext['state']) {
   let w;
   let h;
 
@@ -161,7 +161,7 @@ export function getTipNodeStatus(
 }
 
 /**
- * 便捷的按键和点击时间绑定  TODO: 提到utils
+ * 便捷的按键和点击事件绑定  TODO: 提到utils
  * @param handle - 时间处理函数
  * @param spaceTrigger - 按下空格时是否触发
  * */
@@ -179,7 +179,7 @@ export function keypressAndClick(handle: AnyFunction, spaceTrigger = true) {
 }
 
 /** 根据state获取fullSize */
-export function getFullSize(_state: WineContext['state']) {
+export function getFullSize(_state: _WineContext['state']) {
   let fullSize = [window.innerWidth, window.innerHeight];
 
   if (_state.limitBound) {

@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { defer } from '@lxjx/utils';
 import { useDrag } from 'react-use-gesture';
-import { WineContext, WineDragPositionEnum } from './types';
+import { _WineContext, WineDragPositionEnum } from './types';
 import { _Methods } from './useMethods';
 import { useDragResize } from './useDragResize';
 import { OPEN_FALSE_ANIMATION, OPEN_TRUE_ANIMATION } from './consts';
 import { updateZIndexEvent } from './event';
 import { getTipNode } from './common';
 
-export function useLifeCycle(ctx: WineContext, methods: _Methods) {
-  const { update, state, headerElRef, self, setInsideState, insideState } = ctx;
+export function useLifeCycle(ctx: _WineContext, methods: _Methods) {
+  const { spApi, state, headerElRef, self, setInsideState, insideState } = ctx;
   const { refreshDeps, resize, setXY, full } = methods;
 
   // 标记销毁
@@ -25,14 +25,16 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
     self.tipNode = getTipNode();
 
     // none状态下会影响尺寸计算
-    update({
-      immediate: true,
-      display: 'block',
-    }).then(() => {
+    Promise.all(
+      spApi.start({
+        immediate: true,
+        display: 'block',
+      }),
+    ).then(() => {
       refreshDeps();
 
       // 防止窗口未设置偏移时抖动
-      update({
+      spApi.start({
         visibility: 'visible',
         immediate: true,
       });
@@ -58,19 +60,19 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
   useEffect(() => {
     let ignore = false;
 
-    if (state.open) {
-      update({
+    if (state.show) {
+      spApi.start({
         immediate: true,
         display: 'block',
       });
-      update(OPEN_TRUE_ANIMATION);
+      spApi.start(OPEN_TRUE_ANIMATION);
 
       // 置顶
       methods.top();
     } else {
-      update(OPEN_FALSE_ANIMATION).then(() => {
+      Promise.all(spApi.start(OPEN_FALSE_ANIMATION)).then(() => {
         if (ignore) return;
-        update({
+        spApi.start({
           immediate: true,
           display: 'none',
         });
@@ -80,7 +82,7 @@ export function useLifeCycle(ctx: WineContext, methods: _Methods) {
     return () => {
       ignore = true;
     };
-  }, [state.open]);
+  }, [state.show]);
 
   // 监听置顶还原
   updateZIndexEvent.useEvent(() => {

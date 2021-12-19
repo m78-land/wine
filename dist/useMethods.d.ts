@@ -1,8 +1,8 @@
 import { TupleNumber } from '@lxjx/utils';
-import { WineContext } from './types';
-export declare function useMethods(context: WineContext): {
+import { _WineContext } from './types';
+export declare function useMethods(context: _WineContext): {
     refreshDeps: () => void;
-    setXY: (x: number, y: number, extra?: any) => Promise<void>;
+    setXY: (x: number, y: number, extra?: any) => Promise<import("react-spring").AnimationResult<import("react-spring").Controller<import("./types")._WineAnimateProps>>[]>;
     resize: () => void;
     full: () => void;
     getCursorWrapOffset: (xy: TupleNumber) => number[];
