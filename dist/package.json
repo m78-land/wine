@@ -1,6 +1,6 @@
 {
   "name": "@m78/wine",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "multi task window",
   "keywords": [
     "react",
@@ -32,7 +32,7 @@
   "dependencies": {
     "@lxjx/hooks": "^1.22.5",
     "@lxjx/utils": "^1.15.0",
-    "@m78/render-api": "^1.1.1",
+    "@m78/render-api": "^1.3.3",
     "@types/lodash": "^4.14.168",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
@@ -40,9 +40,9 @@
     "lodash": "^4.17.21",
     "react": "^17.0.1",
     "react-dom": "^17.0.2",
-    "react-spring": "9.0.0-rc.3",
+    "react-spring": "^9.3.2",
     "react-use-gesture": "^9.1.3",
-    "tslib": "^2.1.0"
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.13.12",
