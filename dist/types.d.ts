@@ -5,7 +5,7 @@ import { TupleNumber, Bound } from '@lxjx/utils';
 import { RenderApiComponentProps } from '@m78/render-api/types';
 import { DEFAULT_PROPS } from './consts';
 /**
- * 是否有更新state的需求?
+ * wine接收的state
  * */
 export interface WineState extends RenderApiComponentProps<WineState, WineInstance> {
     /** 内容 */
@@ -21,8 +21,8 @@ export interface WineState extends RenderApiComponentProps<WineState, WineInstan
     width?: number;
     /** 高度, 会覆盖sizeRatio对应方向的配置 */
     height?: number;
-    /** WineBoundEnum.safeArea | 设置可拖动区域的类型 */
-    bound?: WineBoundEnum;
+    /** WineBound.safeArea | 设置可拖动区域的类型 */
+    bound?: WineBound;
     /** 根据此限定对象进行屏幕可用边界修正, 影响全屏窗口大小和自动调整窗口大小的各种操作 */
     limitBound?: Partial<Bound>;
     /** 初始化时最大化显示 */
@@ -36,8 +36,23 @@ export interface WineState extends RenderApiComponentProps<WineState, WineInstan
     /** 置顶/活动事件 */
     onActive?: () => void;
 }
+/** 对外扩展的实例属性和方法 */
+export interface WineInstance {
+    /** 对应的html节点 */
+    el: RefObject<HTMLElement>;
+    /** 置顶 */
+    top: () => void;
+    /** 最大化 */
+    full: () => void;
+    /** 重置大小 */
+    resize: () => void;
+    /** 刷新节点(渲染的组件会被卸载并重绘) */
+    refresh: () => void;
+    /** 一些内部使用的实例变量，某些复杂场景可能会用到 */
+    meta: _WineSelf;
+}
 /** 描述可拖动范围 */
-export declare enum WineBoundEnum {
+export declare enum WineBound {
     /** 窗口范围内 */
     window = "window",
     /** 安全区域内, 确保不会因为误操作导致无法拖动 */
@@ -46,7 +61,7 @@ export declare enum WineBoundEnum {
     noLimit = "noLimit"
 }
 /** 描述可拖动方向 */
-export declare enum WineDragPositionEnum {
+export declare enum WineDragPosition {
     L = 0,
     T = 1,
     R = 2,
@@ -83,21 +98,6 @@ export interface _WineSelf {
     tipNode?: HTMLDivElement;
     /** 组件是否已卸载 */
     unmounted?: boolean;
-}
-/** 扩展的实例属性和方法 */
-export interface WineInstance {
-    /** 对应的html节点 */
-    el: RefObject<HTMLElement>;
-    /** 置顶 */
-    top: () => void;
-    /** 最大化 */
-    full: () => void;
-    /** 重置大小 */
-    resize: () => void;
-    /** 刷新节点(渲染的组件会被卸载并重绘) */
-    refresh: () => void;
-    /** 一些内部使用的实例变量，某些复杂场景可能会用到 */
-    meta: _WineSelf;
 }
 /** 动画属性 */
 export interface _WineAnimateProps {

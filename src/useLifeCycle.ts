@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { defer } from '@lxjx/utils';
 import { useDrag } from 'react-use-gesture';
-import { _WineContext, WineDragPositionEnum } from './types';
+import { _WineContext, WineDragPosition } from './types';
 import { _Methods } from './useMethods';
 import { useDragResize } from './useDragResize';
 import { OPEN_FALSE_ANIMATION, OPEN_TRUE_ANIMATION } from './consts';
@@ -123,12 +123,12 @@ export function useLifeCycle(ctx: _WineContext, methods: _Methods) {
     },
   );
 
-  ctx.dragLineRRef = useDragResize(WineDragPositionEnum.R, ctx, methods);
-  ctx.dragLineLRef = useDragResize(WineDragPositionEnum.L, ctx, methods);
-  ctx.dragLineBRef = useDragResize(WineDragPositionEnum.B, ctx, methods);
-  ctx.dragLineTRef = useDragResize(WineDragPositionEnum.T, ctx, methods);
-  ctx.dragLineLTRef = useDragResize(WineDragPositionEnum.LT, ctx, methods);
-  ctx.dragLineRTRef = useDragResize(WineDragPositionEnum.RT, ctx, methods);
-  ctx.dragLineRBRef = useDragResize(WineDragPositionEnum.RB, ctx, methods);
-  ctx.dragLineLBRef = useDragResize(WineDragPositionEnum.LB, ctx, methods);
+  ctx.dragLineRRef = useDragResize(WineDragPosition.R, ctx, methods);
+  ctx.dragLineLRef = useDragResize(WineDragPosition.L, ctx, methods);
+  ctx.dragLineBRef = useDragResize(WineDragPosition.B, ctx, methods);
+  ctx.dragLineTRef = useDragResize(WineDragPosition.T, ctx, methods);
+  ctx.dragLineLTRef = useDragResize(WineDragPosition.LT, ctx, methods);
+  ctx.dragLineRTRef = useDragResize(WineDragPosition.RT, ctx, methods);
+  ctx.dragLineRBRef = useDragResize(WineDragPosition.RB, ctx, methods);
+  ctx.dragLineLBRef = useDragResize(WineDragPosition.LB, ctx, methods);
 }

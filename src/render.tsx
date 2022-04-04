@@ -19,7 +19,7 @@ const renderBuiltInHeader: NonNullable<WineState['headerCustomer']> = (
         <span
           tabIndex={1}
           className="m78-wine_btn"
-          {...keypressAndClick(() => state.onChange(false))}
+          {...keypressAndClick(() => state.onChange?.(false))}
         >
           <span className="m78-wine_hide-btn" />
         </span>
@@ -36,7 +36,7 @@ const renderBuiltInHeader: NonNullable<WineState['headerCustomer']> = (
         <span
           tabIndex={1}
           className="m78-wine_btn __warning"
-          {...keypressAndClick(state.onDispose)}
+          {...keypressAndClick(state.onDispose!)}
         >
           <span className="m78-wine_dispose-btn" />
         </span>

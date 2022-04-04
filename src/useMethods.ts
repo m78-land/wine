@@ -2,7 +2,7 @@ import _clamp from 'lodash/clamp';
 import { useFn } from '@lxjx/hooks';
 import _throttle from 'lodash/throttle';
 import { isNumber, TupleNumber } from '@lxjx/utils';
-import { WineBoundEnum, _WineContext } from './types';
+import { WineBound, _WineContext } from './types';
 import {
   calcAlignment,
   getFullSize,
@@ -51,12 +51,12 @@ export function useMethods(context: _WineContext) {
       bottom: availableH,
     };
 
-    if (state.bound === WineBoundEnum.window) {
+    if (state.bound === WineBound.window) {
       self.bound = self.windowBound;
       return;
     }
 
-    if (state.bound === WineBoundEnum.safeArea) {
+    if (state.bound === WineBound.safeArea) {
       const minOffset = sizeTuple2Obj(self.headerSize).h;
 
       self.bound = {

@@ -7,7 +7,7 @@
 
 <br>
 
-[link to doc](http://llixianjie.gitee.io/m78/docs/utils/wine)
+[link to doc](https://m78.vercel.app/docs/ecology/wine)
 
 <br>
 

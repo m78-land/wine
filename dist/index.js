@@ -10,27 +10,27 @@ import { useDrag } from 'react-use-gesture';
 import clsx from 'clsx';
 
 /** 描述可拖动范围 */
-var WineBoundEnum;
-(function (WineBoundEnum) {
+var WineBound;
+(function (WineBound) {
     /** 窗口范围内 */
-    WineBoundEnum["window"] = "window";
+    WineBound["window"] = "window";
     /** 安全区域内, 确保不会因为误操作导致无法拖动 */
-    WineBoundEnum["safeArea"] = "safeArea";
+    WineBound["safeArea"] = "safeArea";
     /** 不限制 */
-    WineBoundEnum["noLimit"] = "noLimit";
-})(WineBoundEnum || (WineBoundEnum = {}));
+    WineBound["noLimit"] = "noLimit";
+})(WineBound || (WineBound = {}));
 /** 描述可拖动方向 */
-var WineDragPositionEnum;
-(function (WineDragPositionEnum) {
-    WineDragPositionEnum[WineDragPositionEnum["L"] = 0] = "L";
-    WineDragPositionEnum[WineDragPositionEnum["T"] = 1] = "T";
-    WineDragPositionEnum[WineDragPositionEnum["R"] = 2] = "R";
-    WineDragPositionEnum[WineDragPositionEnum["B"] = 3] = "B";
-    WineDragPositionEnum[WineDragPositionEnum["LT"] = 4] = "LT";
-    WineDragPositionEnum[WineDragPositionEnum["RT"] = 5] = "RT";
-    WineDragPositionEnum[WineDragPositionEnum["RB"] = 6] = "RB";
-    WineDragPositionEnum[WineDragPositionEnum["LB"] = 7] = "LB";
-})(WineDragPositionEnum || (WineDragPositionEnum = {}));
+var WineDragPosition;
+(function (WineDragPosition) {
+    WineDragPosition[WineDragPosition["L"] = 0] = "L";
+    WineDragPosition[WineDragPosition["T"] = 1] = "T";
+    WineDragPosition[WineDragPosition["R"] = 2] = "R";
+    WineDragPosition[WineDragPosition["B"] = 3] = "B";
+    WineDragPosition[WineDragPosition["LT"] = 4] = "LT";
+    WineDragPosition[WineDragPosition["RT"] = 5] = "RT";
+    WineDragPosition[WineDragPosition["RB"] = 6] = "RB";
+    WineDragPosition[WineDragPosition["LB"] = 7] = "LB";
+})(WineDragPosition || (WineDragPosition = {}));
 
 /** 无bound限制 */
 var NO_LIMIT_AREA = { left: -Infinity, right: Infinity, top: -Infinity, bottom: Infinity };
@@ -46,7 +46,7 @@ var MIN_SIZE = 300;
 var DEFAULT_PROPS = {
     alignment: [0.5, 0.5],
     sizeRatio: 0.84,
-    bound: WineBoundEnum.safeArea,
+    bound: WineBound.safeArea,
     initFull: false,
     zIndex: 1000,
 };
@@ -245,11 +245,11 @@ function useMethods(context) {
             right: availableW,
             bottom: availableH,
         };
-        if (state.bound === WineBoundEnum.window) {
+        if (state.bound === WineBound.window) {
             self.bound = self.windowBound;
             return;
         }
-        if (state.bound === WineBoundEnum.safeArea) {
+        if (state.bound === WineBound.safeArea) {
             var minOffset = sizeTuple2Obj(self.headerSize).h;
             self.bound = {
                 left: -wrapW + minOffset,
@@ -413,31 +413,31 @@ function useDragResize(type, ctx, methods) {
         var aniObj = {
             immediate: true,
         };
-        if (type === WineDragPositionEnum.R) {
+        if (type === WineDragPosition.R) {
             aniObj.width = getRightMeta(wrapBound, [x, y]);
         }
-        if (type === WineDragPositionEnum.B) {
+        if (type === WineDragPosition.B) {
             aniObj.height = getBottomMeta(wrapBound, [x, y]);
         }
-        if (type === WineDragPositionEnum.L) {
+        if (type === WineDragPosition.L) {
             Object.assign(aniObj, getLeftMeta(wrapBound, [x, y]));
         }
-        if (type === WineDragPositionEnum.T) {
+        if (type === WineDragPosition.T) {
             Object.assign(aniObj, getTopMeta(wrapBound, [x, y]));
         }
-        if (type === WineDragPositionEnum.RB) {
+        if (type === WineDragPosition.RB) {
             aniObj.width = getRightMeta(wrapBound, [x, y]);
             aniObj.height = getBottomMeta(wrapBound, [x, y]);
         }
-        if (type === WineDragPositionEnum.LB) {
+        if (type === WineDragPosition.LB) {
             Object.assign(aniObj, getLeftMeta(wrapBound, [x, y]));
             aniObj.height = getBottomMeta(wrapBound, [x, y]);
         }
-        if (type === WineDragPositionEnum.LT) {
+        if (type === WineDragPosition.LT) {
             Object.assign(aniObj, getLeftMeta(wrapBound, [x, y]));
             Object.assign(aniObj, getTopMeta(wrapBound, [x, y]));
         }
-        if (type === WineDragPositionEnum.RT) {
+        if (type === WineDragPosition.RT) {
             Object.assign(aniObj, getTopMeta(wrapBound, [x, y]));
             aniObj.width = getRightMeta(wrapBound, [x, y]);
         }
@@ -581,14 +581,14 @@ function useLifeCycle(ctx, methods) {
             passive: false,
         },
     });
-    ctx.dragLineRRef = useDragResize(WineDragPositionEnum.R, ctx, methods);
-    ctx.dragLineLRef = useDragResize(WineDragPositionEnum.L, ctx, methods);
-    ctx.dragLineBRef = useDragResize(WineDragPositionEnum.B, ctx, methods);
-    ctx.dragLineTRef = useDragResize(WineDragPositionEnum.T, ctx, methods);
-    ctx.dragLineLTRef = useDragResize(WineDragPositionEnum.LT, ctx, methods);
-    ctx.dragLineRTRef = useDragResize(WineDragPositionEnum.RT, ctx, methods);
-    ctx.dragLineRBRef = useDragResize(WineDragPositionEnum.RB, ctx, methods);
-    ctx.dragLineLBRef = useDragResize(WineDragPositionEnum.LB, ctx, methods);
+    ctx.dragLineRRef = useDragResize(WineDragPosition.R, ctx, methods);
+    ctx.dragLineLRef = useDragResize(WineDragPosition.L, ctx, methods);
+    ctx.dragLineBRef = useDragResize(WineDragPosition.B, ctx, methods);
+    ctx.dragLineTRef = useDragResize(WineDragPosition.T, ctx, methods);
+    ctx.dragLineLTRef = useDragResize(WineDragPosition.LT, ctx, methods);
+    ctx.dragLineRTRef = useDragResize(WineDragPosition.RT, ctx, methods);
+    ctx.dragLineRBRef = useDragResize(WineDragPosition.RB, ctx, methods);
+    ctx.dragLineLBRef = useDragResize(WineDragPosition.LB, ctx, methods);
 }
 
 /** 渲染内置顶栏 */
@@ -596,7 +596,7 @@ var renderBuiltInHeader = function (props, state, instance, isFull) {
     return (React.createElement("div", __assign({ className: "m78-wine_header" }, props),
         React.createElement("div", { className: "m78-wine_header-content" }, state.header),
         React.createElement("div", { className: "m78-wine_header-actions", onMouseDown: function (e) { return e.stopPropagation(); } },
-            React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(function () { return state.onChange(false); })),
+            React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(function () { var _a; return (_a = state.onChange) === null || _a === void 0 ? void 0 : _a.call(state, false); })),
                 React.createElement("span", { className: "m78-wine_hide-btn" })),
             isFull && (React.createElement("span", __assign({ tabIndex: 1, className: "m78-wine_btn" }, keypressAndClick(instance.resize)),
                 React.createElement("span", { className: "m78-wine_resize-btn" }))),
@@ -711,4 +711,4 @@ var Wine = create({
 });
 
 export default Wine;
-export { WineBoundEnum, WineDragPositionEnum, keypressAndClick };
+export { WineBound, WineDragPosition, keypressAndClick };

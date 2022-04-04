@@ -2,12 +2,12 @@ import { useDrag } from 'react-use-gesture';
 import _clamp from 'lodash/clamp';
 import { useRef } from 'react';
 import { isNumber, TupleNumber } from '@lxjx/utils';
-import { _WineContext, WineDragPositionEnum } from './types';
+import { _WineContext, WineDragPosition } from './types';
 import { _Methods } from './useMethods';
 import { sizeTuple2Obj } from './common';
 import { MIN_SIZE } from './consts';
 
-export function useDragResize(type: WineDragPositionEnum, ctx: _WineContext, methods: _Methods) {
+export function useDragResize(type: WineDragPosition, ctx: _WineContext, methods: _Methods) {
   const ref = useRef<HTMLDivElement>(null!);
   const { wrapElRef, self, spApi, insideState, setInsideState } = ctx;
 
@@ -20,38 +20,38 @@ export function useDragResize(type: WineDragPositionEnum, ctx: _WineContext, met
         immediate: true,
       };
 
-      if (type === WineDragPositionEnum.R) {
+      if (type === WineDragPosition.R) {
         aniObj.width = getRightMeta(wrapBound, [x, y]);
       }
 
-      if (type === WineDragPositionEnum.B) {
+      if (type === WineDragPosition.B) {
         aniObj.height = getBottomMeta(wrapBound, [x, y]);
       }
 
-      if (type === WineDragPositionEnum.L) {
+      if (type === WineDragPosition.L) {
         Object.assign(aniObj, getLeftMeta(wrapBound, [x, y]));
       }
 
-      if (type === WineDragPositionEnum.T) {
+      if (type === WineDragPosition.T) {
         Object.assign(aniObj, getTopMeta(wrapBound, [x, y]));
       }
 
-      if (type === WineDragPositionEnum.RB) {
+      if (type === WineDragPosition.RB) {
         aniObj.width = getRightMeta(wrapBound, [x, y]);
         aniObj.height = getBottomMeta(wrapBound, [x, y]);
       }
 
-      if (type === WineDragPositionEnum.LB) {
+      if (type === WineDragPosition.LB) {
         Object.assign(aniObj, getLeftMeta(wrapBound, [x, y]));
         aniObj.height = getBottomMeta(wrapBound, [x, y]);
       }
 
-      if (type === WineDragPositionEnum.LT) {
+      if (type === WineDragPosition.LT) {
         Object.assign(aniObj, getLeftMeta(wrapBound, [x, y]));
         Object.assign(aniObj, getTopMeta(wrapBound, [x, y]));
       }
 
-      if (type === WineDragPositionEnum.RT) {
+      if (type === WineDragPosition.RT) {
         Object.assign(aniObj, getTopMeta(wrapBound, [x, y]));
         aniObj.width = getRightMeta(wrapBound, [x, y]);
       }

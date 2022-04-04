@@ -1,5 +1,5 @@
 import { TupleNumber } from '@lxjx/utils';
-import { WineBoundEnum } from './types';
+import { WineBound } from './types';
 /** 无bound限制 */
 export declare const NO_LIMIT_AREA: {
     left: number;
@@ -19,7 +19,7 @@ export declare const MIN_SIZE = 300;
 export declare const DEFAULT_PROPS: {
     alignment: TupleNumber;
     sizeRatio: number;
-    bound: WineBoundEnum;
+    bound: WineBound;
     initFull: boolean;
     zIndex: number;
 };
