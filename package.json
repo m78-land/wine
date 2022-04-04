@@ -1,6 +1,6 @@
 {
   "name": "@m78/wine",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "multi task window",
   "keywords": [
     "react",
@@ -32,7 +32,7 @@
   "dependencies": {
     "@lxjx/hooks": "^1.30.0",
     "@lxjx/utils": "^1.7.9",
-    "@m78/render-api": "^1.4.0",
+    "@m78/render-api": "^1.4.1",
     "@types/lodash": "^4.14.168",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",

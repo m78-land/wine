@@ -1231,7 +1231,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@lxjx/hooks@^1.29.1", "@lxjx/hooks@^1.30.0":
+"@lxjx/hooks@^1.30.0":
   version "1.30.0"
   resolved "https://registry.npmjs.org/@lxjx/hooks/-/hooks-1.30.0.tgz#7368b27ed2fb2d60d69c3233e61a79864ab0acd2"
   integrity sha512-WQ3fUn64OjAw5omwch7PDa35eKhf17nK75TSo8XzLXl0aTM8w5I6oLi6H4iI2UWTLTM/zvqqWl1ohHKeHmy5qg==
@@ -1260,13 +1260,13 @@
     lodash "^4.17.21"
     tslib "^2.1.0"
 
-"@m78/render-api@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.npmjs.org/@m78/render-api/-/render-api-1.4.0.tgz#7e788eef038a8ba5389535a247293ced43ed8ed8"
-  integrity sha512-OezdxDeay7e4vO5bTruc4EX1hYGx5gTeYXvA63sthVa8qiNnuTjcwWFcl8DLvBwyMpj4N/Ef7wzpuocVngQK4g==
+"@m78/render-api@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.npmjs.org/@m78/render-api/-/render-api-1.4.1.tgz#38229d42f42e28375e841f4bafe93c60bde5f8c7"
+  integrity sha512-9LAYc4JhYRXuJSc3FE8QtG0gIOyyFrud6fY61AIQ4AueMuFTGA/lw56ZA8lKFDpv2SrRylFTEYSxa8r6XJbRig==
   dependencies:
-    "@lxjx/hooks" "^1.29.1"
-    "@lxjx/utils" "^1.7.7"
+    "@lxjx/hooks" "^1.30.0"
+    "@lxjx/utils" "^1.7.9"
     "@types/react" "^17.0.37"
     "@types/react-dom" "^17.0.11"
     react "^17.0.1"
