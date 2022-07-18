@@ -84,8 +84,9 @@ export function render(ctx: _WineContext, methods: _Methods, instance: WineInsta
           style={{
             top: insideState.headerHeight,
           }}
+          key={insideState.refreshKey}
         >
-          <React.Fragment key={insideState.refreshKey}>{state.content}</React.Fragment>
+          <React.Fragment>{state.content}</React.Fragment>
         </div>
       </div>
       <div className="m78-wine_drag-line-l" ref={ctx.dragLineLRef} />

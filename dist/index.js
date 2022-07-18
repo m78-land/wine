@@ -621,8 +621,8 @@ function render(ctx, methods, instance) {
             }, state, instance, insideState.isFull),
             React.createElement("div", { className: "m78-wine_content m78-wine_scrollbar", style: {
                     top: insideState.headerHeight,
-                } },
-                React.createElement(React.Fragment, { key: insideState.refreshKey }, state.content))),
+                }, key: insideState.refreshKey },
+                React.createElement(React.Fragment, null, state.content))),
         React.createElement("div", { className: "m78-wine_drag-line-l", ref: ctx.dragLineLRef }),
         React.createElement("div", { className: "m78-wine_drag-line-t", ref: ctx.dragLineTRef }),
         React.createElement("div", { className: "m78-wine_drag-line-r", ref: ctx.dragLineRRef }),
